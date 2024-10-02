@@ -1,26 +1,129 @@
-<script src="dataProcessor.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bike Rides Data</title>
+    <title>Bergen BySykkel Speedrunning</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #555;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #appDescription {
+            text-align: center;
+            margin: 20px auto;
+            font-size: 1.2em;
+            line-height: 1.4;
+            max-width: 800px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            background-color: #ffffff;
+            border-radius: 8px;
+        }
+
+        #loadData {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #loadData:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr.header-row {
+            background-color: #e0f7fa;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background-color: #d1ecf1;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bike Ride Data</h1>
-    <button id="loadData">Load Bike Ride Data</button>
+
+    <h1>🚴 Bergen BySykkel Speedrunning</h1>
+    <h2>Vi kårer de raskeste BySykkel-turene mellom Bergens populære sykkelstasjoner hver måned!</h2>
+
+    <div id="appDescription">
+        <p>Er du nysgjerrig på hvem som har satt de raskeste tidene mellom sykkelstasjonene i Bergen? Nå kan du følge med på månedens topp 3 raskeste turer og se om din daglige sykkeltur kan måle seg med Bergens raskeste!</p>
+        <p>Konkurrer med andre syklister, utfordre deg selv, og følg med på rangeringene! Vi viser deg de raskeste tidene mellom utvalgte stasjoner, og oppdaterer topplisten hver måned for å kåre de raskeste syklister i Bergen.</p>
+    </div>
+
+    <button id="loadData">Last inn BySykkel-data</button>
+
     <table id="dataTable">
         <thead>
             <tr>
-                <th>Start Station</th>
-                <th>End Station</th>
-                <th>Duration (seconds)</th>
+                <th>Start Stasjon</th>
+                <th>Slutt Stasjon</th>
+                <th>Varighet (sekunder)</th>
+                <th>Rangering</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Data will be populated here -->
+            <!-- Data will be dynamically loaded here -->
         </tbody>
     </table>
-    <script src="script.js"></script>
+
+    <footer>
+        <p>© 2024 Bergen BySykkel Speedrunning. Bygget med entusiasme for dataanalyse og sykkelglede! 🚴‍♂️</p>
+    </footer>
+
 </body>
 </html>
