@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let data = await response.json();
             topRoutes = {};
+            console.log("Fetched Data: ", data);  // Debug log to see the entire dataset
 
             // Step 1: Create a map to store the top 3 fastest rides for each start-end pair
             data.forEach((ride) => {
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const duration = ride.duration;
 
                 const key = `${startStation} - ${endStation}`;
+
                 if (!topRoutes[key]) {
                     topRoutes[key] = [];
                 }
@@ -44,7 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let tableBody = document.querySelector("#dataTable tbody");
         tableBody.innerHTML = "";
 
-        for (const key in routes) {
+        // Step 2: Get and sort the route keys alphabetically
+        const sortedKeys = Object.keys(routes).sort();
+
+        // Display each start-end pair and their top 3 rides in alphabetical order
+        sortedKeys.forEach((key) => {
             routes[key].forEach((ride, index) => {
                 let row = document.createElement("tr");
                 row.className = index === 0 ? "highlight" : "";
@@ -56,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 tableBody.appendChild(row);
             });
-        }
+        });
     }
 
     // Filter routes based on the search input
