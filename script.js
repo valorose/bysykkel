@@ -1,18 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("loadData").addEventListener("click", async () => {
         try {
-            // Fetch the JSON file from the same directory
-            let response = await fetch("rides.json"); // Make sure the filename matches exactly
+            // Fetch the JSON file using the full URL
+            let response = await fetch("https://test-java-4n67.onrender.com/rides.json");
             if (!response.ok) {
                 throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
             }
+
             let data = await response.json();
+            console.log("Fetched Data: ", data); // Check if data is correctly fetched
 
             // Select the table body
             let tableBody = document.querySelector("#dataTable tbody");
             tableBody.innerHTML = ""; // Clear any existing rows
 
-            // Iterate over each ride and create a new row in the table
+            // Display the data in the table
             data.forEach((ride) => {
                 let row = document.createElement("tr");
                 row.innerHTML = `
@@ -22,6 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 tableBody.appendChild(row);
             });
+
+            console.log("Data successfully displayed in the table!");
+
         } catch (error) {
             console.error("Error loading data: ", error);
         }
