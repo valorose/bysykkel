@@ -36,12 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Step 3: Display the top 3 fastest routes in the table
+            // Step 3: Display the top 3 fastest routes in a more user-friendly format
             let tableBody = document.querySelector("#dataTable tbody");
             tableBody.innerHTML = ""; // Clear any existing rows
 
-            // Display each start-end pair and their top 3 rides
+            // Display each start-end pair and their top 3 rides with a clear separation
             for (const key in topRoutes) {
+                // Add a header row for each start-end pair
+                let headerRow = document.createElement("tr");
+                headerRow.innerHTML = `
+                    <td colspan="4" style="font-weight: bold; background-color: #f2f2f2;">${key}</td>
+                `;
+                tableBody.appendChild(headerRow);
+
+                // Display each of the top 3 rides for this start-end pair
                 topRoutes[key].forEach((ride, index) => {
                     let row = document.createElement("tr");
                     row.innerHTML = `
@@ -52,6 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     `;
                     tableBody.appendChild(row);
                 });
+
+                // Add a blank row for spacing between different route groups
+                let spacerRow = document.createElement("tr");
+                spacerRow.innerHTML = `<td colspan="4" style="height: 10px;"></td>`;
+                tableBody.appendChild(spacerRow);
             }
 
             console.log("Top 3 fastest routes displayed successfully!");
