@@ -37,7 +37,7 @@
             border-radius: 8px;
         }
 
-        #loadData {
+        #loadData, #searchInput {
             display: block;
             margin: 20px auto;
             padding: 15px 25px;
@@ -50,8 +50,18 @@
             transition: background-color 0.3s ease;
         }
 
-        #loadData:hover {
+        #loadData:hover, #searchInput:hover {
             background-color: #0056b3;
+        }
+
+        #searchInput {
+            width: 60%;
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 1em;
         }
 
         table {
@@ -107,6 +117,9 @@
 
     <button id="loadData">Last inn BySykkel-data</button>
 
+    <!-- Add a search input field here -->
+    <input type="text" id="searchInput" placeholder="Søk etter start- eller sluttstasjon..." />
+
     <table id="dataTable">
         <thead>
             <tr>
@@ -124,6 +137,7 @@
     <footer>
         <p>© 2024 Bergen BySykkel Speedrunning. Bygget med entusiasme for dataanalyse og sykkelglede! 🚴‍♂️</p>
     </footer>
-<script src="script.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
