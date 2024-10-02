@@ -7,14 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let data = await response.json();
-
-            // Log the fetched data to see the structure
             console.log("Fetched Data: ", data);
 
-            // Step 1: Create a map to store the fastest routes
-            let fastestRoutes = {};
+            // Step 1: Create a map to store the top 3 fastest rides for each start-end pair
+            let topRoutes = {};
 
-            // Step 2: Iterate through the data and find the fastest duration for each start-end pair
+            // Step 2: Iterate through the data and build the top 3 fastest rides for each start-end pair
             data.forEach((ride) => {
                 const startStation = ride.start_station_name;
                 const endStation = ride.end_station_name;
@@ -23,36 +21,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Create a unique key for each start-end pair
                 const key = `${startStation} - ${endStation}`;
 
-                // If the key doesn't exist or we find a shorter duration, update the map
-                if (!fastestRoutes[key] || duration < fastestRoutes[key].duration) {
-                    fastestRoutes[key] = {
-                        startStation,
-                        endStation,
-                        duration
-                    };
+                // Initialize an empty array if this is the first time seeing this pair
+                if (!topRoutes[key]) {
+                    topRoutes[key] = [];
+                }
+
+                // Add the current ride to the list and sort to keep the top 3 shortest durations
+                topRoutes[key].push({ startStation, endStation, duration });
+                topRoutes[key].sort((a, b) => a.duration - b.duration);
+
+                // Keep only the top 3 shortest durations
+                if (topRoutes[key].length > 3) {
+                    topRoutes[key].pop();
                 }
             });
 
-            // Log the fastest routes for debugging
-            console.log("Fastest Routes: ", fastestRoutes);
-
-            // Step 3: Display the fastest routes in the table
+            // Step 3: Display the top 3 fastest routes in the table
             let tableBody = document.querySelector("#dataTable tbody");
             tableBody.innerHTML = ""; // Clear any existing rows
 
-            // Loop through the fastest routes and add them to the table
-            for (const key in fastestRoutes) {
-                const ride = fastestRoutes[key];
-                let row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${ride.startStation}</td>
-                    <td>${ride.endStation}</td>
-                    <td>${ride.duration}</td>
-                `;
-                tableBody.appendChild(row);
+            // Display each start-end pair and their top 3 rides
+            for (const key in topRoutes) {
+                topRoutes[key].forEach((ride, index) => {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${ride.startStation}</td>
+                        <td>${ride.endStation}</td>
+                        <td>${ride.duration}</td>
+                        <td>Rank ${index + 1}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
             }
 
-            console.log("Fastest routes successfully displayed in the table!");
+            console.log("Top 3 fastest routes displayed successfully!");
 
         } catch (error) {
             console.error("Error loading data: ", error);
