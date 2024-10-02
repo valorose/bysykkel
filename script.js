@@ -1,11 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("loadData").addEventListener("click", async () => {
+    console.log("Document Loaded");
+
+    // Check if the button exists
+    const loadDataButton = document.getElementById("loadData");
+    if (!loadDataButton) {
+        console.error("Load Data button not found.");
+        return;
+    }
+
+    loadDataButton.addEventListener("click", async () => {
+        console.log("Load Data button clicked");
+
         try {
+            // Fetch the data from the JSON endpoint
             let response = await fetch("https://test-java-4n67.onrender.com/rides.json");
             if (!response.ok) {
                 throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
             }
 
+            // Parse the data
             let data = await response.json();
             console.log("Fetched Data: ", data);
 
@@ -36,35 +49,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Step 3: Display the top 3 fastest routes in a more user-friendly format
+            // Step 3: Display the top 3 fastest routes in the table
             let tableBody = document.querySelector("#dataTable tbody");
+            if (!tableBody) {
+                console.error("Table body not found.");
+                return;
+            }
+
             tableBody.innerHTML = ""; // Clear any existing rows
 
-            // Display each start-end pair and their top 3 rides with a clear separation
+            // Display each start-end pair and their top 3 rides
             for (const key in topRoutes) {
-                // Add a header row for each start-end pair
-                let headerRow = document.createElement("tr");
-                headerRow.innerHTML = `
-                    <td colspan="4" style="font-weight: bold; background-color: #f2f2f2;">${key}</td>
-                `;
-                tableBody.appendChild(headerRow);
-
-                // Display each of the top 3 rides for this start-end pair
                 topRoutes[key].forEach((ride, index) => {
                     let row = document.createElement("tr");
+                    row.className = index === 0 ? "highlight" : "";  // Highlight the fastest ride
                     row.innerHTML = `
                         <td>${ride.startStation}</td>
                         <td>${ride.endStation}</td>
                         <td>${ride.duration}</td>
-                        <td>Rank ${index + 1}</td>
+                        <td>Rangering ${index + 1}</td>
                     `;
                     tableBody.appendChild(row);
                 });
-
-                // Add a blank row for spacing between different route groups
-                let spacerRow = document.createElement("tr");
-                spacerRow.innerHTML = `<td colspan="4" style="height: 10px;"></td>`;
-                tableBody.appendChild(spacerRow);
             }
 
             console.log("Top 3 fastest routes displayed successfully!");
