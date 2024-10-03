@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const loadDataButton = document.getElementById("loadData");
-    let topRoutes = {};
+    let topRoutes = []; // Change topRoutes to a flat array for better data handling
     let allStations = {};
 
     loadDataButton.addEventListener("click", async () => {
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let data = await response.json();
-            topRoutes = {};
+            topRoutes = [];  // Reset to an empty array
             allStations = {};
 
             // Process and organize the data
@@ -32,22 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     allStations[endStation] = "end";
                 }
 
-                // Organize data for top 3 rides for each start-end pair
-                const key = `${startStation} - ${endStation}`;
-                if (!topRoutes[key]) {
-                    topRoutes[key] = [];
-                }
-                topRoutes[key].push({ startStation, endStation, duration: ride.duration });
-
-                // Remove single occurrence routes from ranking
-                if (topRoutes[key].length > 1) {
-                    topRoutes[key].sort((a, b) => a.duration - b.duration);
-                    if (topRoutes[key].length > 3) {
-                        topRoutes[key].pop();
-                    }
-                } else {
-                    delete topRoutes[key];
-                }
+                // Push each ride directly into topRoutes array
+                topRoutes.push({ startStation, endStation, duration: ride.duration });
             });
 
             console.log("Processed topRoutes:", topRoutes);  // Debugging statement
@@ -120,24 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll(".end-checkbox:checked")
         ).map((checkbox) => checkbox.value);
 
-        const filteredRoutes = {};
-
-        console.log("Selected start stations:", selectedStartStations);  // Debugging statement
-        console.log("Selected end stations:", selectedEndStations);  // Debugging statement
-
-        for (const key in topRoutes) {
-            topRoutes[key].forEach((ride) => {
-                if (
-                    (selectedStartStations.length === 0 || selectedStartStations.includes(ride.startStation)) &&
-                    (selectedEndStations.length === 0 || selectedEndStations.includes(ride.endStation))
-                ) {
-                    if (!filteredRoutes[key]) {
-                        filteredRoutes[key] = [];
-                    }
-                    filteredRoutes[key].push(ride);
-                }
-            });
-        }
+        const filteredRoutes = topRoutes.filter(
+            (ride) =>
+                (selectedStartStations.length === 0 || selectedStartStations.includes(ride.startStation)) &&
+                (selectedEndStations.length === 0 || selectedEndStations.includes(ride.endStation))
+        );
 
         console.log("Filtered routes:", filteredRoutes);  // Debugging statement
         displayRoutes(filteredRoutes);
@@ -150,25 +123,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log("Displaying routes:", routes);  // Debugging statement
 
-        const sortedKeys = Object.keys(routes).sort();
-
-        if (sortedKeys.length === 0) {
+        if (routes.length === 0) {
             tableBody.innerHTML = "<tr><td colspan='4'>No rides available</td></tr>";
             return;
         }
 
-        sortedKeys.forEach((key) => {
-            routes[key].forEach((ride, index) => {
-                let row = document.createElement("tr");
-                row.className = index === 0 ? "highlight" : "";
-                row.innerHTML = `
-                    <td>${ride.startStation}</td>
-                    <td>${ride.endStation}</td>
-                    <td>${ride.duration}</td>
-                    <td>${index === 0 ? '🥇 1st Place' : index === 1 ? '🥈 2nd Place' : '🥉 3rd Place'}</td>
-                `;
-                tableBody.appendChild(row);
-            });
+        routes.forEach((ride, index) => {
+            let row = document.createElement("tr");
+            row.className = index === 0 ? "highlight" : "";
+            row.innerHTML = `
+                <td>${ride.startStation}</td>
+                <td>${ride.endStation}</td>
+                <td>${ride.duration}</td>
+                <td>${index === 0 ? '🥇 1st Place' : index === 1 ? '🥈 2nd Place' : '🥉 3rd Place'}</td>
+            `;
+            tableBody.appendChild(row);
         });
     }
 });
