@@ -25,6 +25,22 @@ header {
     margin: 5px 0 20px 0;
 }
 
+/* Banner Section */
+#banner {
+    background: linear-gradient(45deg, #5abf41, #4aa336);
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+#banner h2 {
+    font-size: 2.2em;
+}
+
+#banner p {
+    font-size: 1.3em;
+}
+
 /* Description Section */
 #appDescription {
     text-align: center;
@@ -43,7 +59,7 @@ header {
     display: block;
     margin: 30px auto;
     padding: 15px 40px;
-    background-color: #5abf41;  /* Green BySykkel button */
+    background: linear-gradient(45deg, #5abf41, #4aa336);  /* Gradient Green Button */
     color: white;
     border: none;
     cursor: pointer;
@@ -53,15 +69,4 @@ header {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-#loadData:hover {
-    background-color: #4aa336;  /* Darker green on hover */
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Filter Section */
-#filters {
-    display: flex;
-    justify-content: space-around;
-    margin: 20px auto;
-    padding: 20px;
-    background
+#loadData:hover
