@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadDataButton.addEventListener("click", async () => {
         try {
+            console.log("Load Data Button Clicked");  // Debug Log
             let response = await fetch("rides.json");
             if (!response.ok) {
                 throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
@@ -16,12 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
             allStations = {};
             stationPairCount = {};  // Reset the pair counter
 
+            console.log("Data Successfully Loaded: ", data);  // Debug Log
+
             // Process and organize the data
             data.forEach((ride) => {
                 const startStation = ride.start_station_name;
                 const endStation = ride.end_station_name;
 
-                if (!startStation || !endStation) return;  // Skip rides without station names
+                if (!startStation || !endStation) {
+                    console.warn("Missing Start or End Station for Ride: ", ride);  // Debug Log
+                    return;
+                }
 
                 if (!allStations[startStation]) {
                     allStations[startStation] = "start";
@@ -40,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 topRoutes.push({ startStation, endStation, duration: ride.duration });
             });
 
-            console.log("Station Pair Count:", stationPairCount);  // Debugging statement
+            console.log("Processed Station Pair Count: ", stationPairCount);  // Debug Log
 
             // Display checkboxes for Start and End stations based on the pair count
             createCheckboxes();
@@ -56,17 +62,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Create checkbox filters for stations
     function createCheckboxes() {
         const startStationFilter = document.getElementById("startStationFilter");
         const endStationFilter = document.getElementById("endStationFilter");
 
-        // Ensure elements exist before attempting to modify them
+        // Check if the elements exist
         if (!startStationFilter || !endStationFilter) {
             console.error("Start or End Station filter elements are missing in the HTML.");
             return;
         }
 
+        console.log("Creating checkboxes for stations...");  // Debug Log
         const startStationsWithEnoughTrips = new Set();
         const endStationsWithEnoughTrips = new Set();
 
@@ -80,6 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const sortedStartStations = Array.from(startStationsWithEnoughTrips).sort();
         const sortedEndStations = Array.from(endStationsWithEnoughTrips).sort();
+
+        console.log("Start Stations with Enough Trips: ", sortedStartStations);  // Debug Log
+        console.log("End Stations with Enough Trips: ", sortedEndStations);  // Debug Log
 
         sortedStartStations.forEach((station) => {
             let checkbox = document.createElement("input");
@@ -116,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const startCheckboxes = document.querySelectorAll(".start-checkbox");
         const endCheckboxes = document.querySelectorAll(".end-checkbox");
 
+        console.log("Start and End Checkboxes Created");  // Debug Log
         startCheckboxes.forEach((checkbox) =>
             checkbox.addEventListener("change", () => filterRoutes())
         );
@@ -124,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // Filter routes based on selected start and end stations
     function filterRoutes() {
         const selectedStartStations = Array.from(
             document.querySelectorAll(".start-checkbox:checked")
@@ -140,13 +149,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 (selectedEndStations.length === 0 || selectedEndStations.includes(ride.endStation))
         );
 
-        console.log("Filtered routes:", filteredRoutes);  // Debugging statement
+        console.log("Filtered Routes: ", filteredRoutes);  // Debug Log
         displayRoutes(filteredRoutes);
     }
 
-    // Display the filtered routes in the table
     function displayRoutes(routes) {
         let tableBody = document.querySelector("#dataTable tbody");
+        
+        if (!tableBody) {
+            console.error("Data Table element is missing in the HTML.");
+            return;
+        }
+        
         tableBody.innerHTML = "";
 
         if (routes.length === 0) {
@@ -154,7 +168,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Group routes by start-end pairs
         const groupedRoutes = routes.reduce((groups, ride) => {
             const key = `${ride.startStation} -> ${ride.endStation}`;
             if (!groups[key]) {
@@ -164,9 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return groups;
         }, {});
 
-        // Display each group separately
         Object.keys(groupedRoutes).forEach((key) => {
-            groupedRoutes[key].sort((a, b) => a.duration - b.duration);  // Sort within each group
+            groupedRoutes[key].sort((a, b) => a.duration - b.duration);
 
             groupedRoutes[key].forEach((ride, index) => {
                 let row = document.createElement("tr");
@@ -182,9 +194,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Display a leaderboard with the fastest times for each route
     function displayLeaderboard(routes) {
         let leaderboardBody = document.querySelector("#leaderboardTable tbody");
+        
+        if (!leaderboardBody) {
+            console.error("Leaderboard Table element is missing in the HTML.");
+            return;
+        }
+
         leaderboardBody.innerHTML = "";  // Clear existing content
 
         const groupedRoutes = routes.reduce((groups, ride) => {
