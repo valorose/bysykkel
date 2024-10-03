@@ -28,6 +28,18 @@
 
     <button id="loadData">Last inn BySykkel-data</button>
 
+    <!-- New Filter Section -->
+    <div id="filters">
+        <div id="startStationFilter">
+            <h3>Start Station</h3>
+            <!-- Checkboxes for Start Stations will be dynamically added here -->
+        </div>
+        <div id="endStationFilter">
+            <h3>End Station</h3>
+            <!-- Checkboxes for End Stations will be dynamically added here -->
+        </div>
+    </div>
+
     <!-- New Leaderboard Section -->
     <div id="leaderboard">
         <h2>🏆 Fastest Routes Leaderboard 🏆</h2>
@@ -45,6 +57,21 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Data Table Section -->
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Start Stasjon</th>
+                <th>Slutt Stasjon</th>
+                <th>Varighet (sekunder)</th>
+                <th>Rangering</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be dynamically loaded here -->
+        </tbody>
+    </table>
 
     <footer>
         <p>© 2024 Bergen BySykkel Speedrunning. Bygget med entusiasme for dataanalyse og sykkelglede! 🚴‍♂️</p>
