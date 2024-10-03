@@ -21,10 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const startStation = ride.start_station_name;
                 const endStation = ride.end_station_name;
 
-                // Skip rides that have missing station names
-                if (!startStation || !endStation) return;
+                if (!startStation || !endStation) return;  // Skip rides without station names
 
-                // Store unique stations
                 if (!allStations[startStation]) {
                     allStations[startStation] = "start";
                 }
@@ -39,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 stationPairCount[key] += 1;
 
-                // Push each ride directly into topRoutes array
                 topRoutes.push({ startStation, endStation, duration: ride.duration });
             });
 
@@ -48,8 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // Display checkboxes for Start and End stations based on the pair count
             createCheckboxes();
 
-            // Display full dataset in the table initially
+            // Display routes in the main table
             displayRoutes(topRoutes);
+
+            // Display the leaderboard with the fastest times for each station pair
+            displayLeaderboard(topRoutes);
 
         } catch (error) {
             console.error("Error loading data: ", error);
@@ -60,11 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const startStationFilter = document.getElementById("startStationFilter");
         const endStationFilter = document.getElementById("endStationFilter");
 
-        // Filter stations that have more than three trips from station to station
         const startStationsWithEnoughTrips = new Set();
         const endStationsWithEnoughTrips = new Set();
 
-        // Check each pair and add only stations that meet the threshold
         for (const key in stationPairCount) {
             if (stationPairCount[key] >= 3) {
                 const [start, end] = key.split(" -> ");
@@ -73,18 +71,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Convert sets to arrays and sort them alphabetically
         const sortedStartStations = Array.from(startStationsWithEnoughTrips).sort();
         const sortedEndStations = Array.from(endStationsWithEnoughTrips).sort();
 
-        // Create checkboxes for each start station that meets the trip count condition
         sortedStartStations.forEach((station) => {
             let checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.id = `station-${station}`;
             checkbox.value = station;
 
-            // Label for the checkbox
             let label = document.createElement("label");
             label.htmlFor = `station-${station}`;
             label.textContent = station;
@@ -95,14 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
             startStationFilter.appendChild(document.createElement("br"));
         });
 
-        // Create checkboxes for each end station that meets the trip count condition
         sortedEndStations.forEach((station) => {
             let checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.id = `station-${station}`;
             checkbox.value = station;
 
-            // Label for the checkbox
             let label = document.createElement("label");
             label.htmlFor = `station-${station}`;
             label.textContent = station;
@@ -113,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
             endStationFilter.appendChild(document.createElement("br"));
         });
 
-        // Add event listeners for dynamic filtering
         const startCheckboxes = document.querySelectorAll(".start-checkbox");
         const endCheckboxes = document.querySelectorAll(".end-checkbox");
 
@@ -125,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // Function to filter routes based on selected start and end stations
     function filterRoutes() {
         const selectedStartStations = Array.from(
             document.querySelectorAll(".start-checkbox:checked")
@@ -145,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
         displayRoutes(filteredRoutes);
     }
 
-    // Updated Function to display the routes in the table
     function displayRoutes(routes) {
         let tableBody = document.querySelector("#dataTable tbody");
         tableBody.innerHTML = "";
@@ -157,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Group routes by start-end pairs
         const groupedRoutes = routes.reduce((groups, ride) => {
             const key = `${ride.startStation} -> ${ride.endStation}`;
             if (!groups[key]) {
@@ -167,9 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return groups;
         }, {});
 
-        // Display each group separately
         Object.keys(groupedRoutes).forEach((key) => {
-            groupedRoutes[key].sort((a, b) => a.duration - b.duration);  // Sort within each group
+            groupedRoutes[key].sort((a, b) => a.duration - b.duration);
 
             groupedRoutes[key].forEach((ride, index) => {
                 let row = document.createElement("tr");
@@ -182,6 +170,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 tableBody.appendChild(row);
             });
+        });
+    }
+
+    function displayLeaderboard(routes) {
+        let leaderboardBody = document.querySelector("#leaderboardTable tbody");
+        leaderboardBody.innerHTML = "";  // Clear existing content
+
+        const groupedRoutes = routes.reduce((groups, ride) => {
+            const key = `${ride.startStation} -> ${ride.endStation}`;
+            if (!groups[key]) {
+                groups[key] = { startStation: ride.startStation, endStation: ride.endStation, fastestTime: ride.duration, totalRides: 0 };
+            }
+            groups[key].fastestTime = Math.min(groups[key].fastestTime, ride.duration);
+            groups[key].totalRides += 1;
+            return groups;
+        }, {});
+
+        const sortedRoutes = Object.values(groupedRoutes).sort((a, b) => a.fastestTime - b.fastestTime);
+
+        sortedRoutes.forEach(route => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${route.startStation}</td>
+                <td>${route.endStation}</td>
+                <td><strong>${route.fastestTime}</strong></td>
+                <td>${route.totalRides}</td>
+            `;
+            leaderboardBody.appendChild(row);
         });
     }
 });
