@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bergen BySykkel Speedrun App</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { margin: 20px; }
-        .dropdown-container { margin: 10px 0; }
-        .results { margin-top: 20px; }
-        .result-card { border: 1px solid #ddd; padding: 10px; margin: 5px 0; background-color: #f9f9f9; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -28,80 +22,7 @@
         <button id="showTimes">Show Fastest Times</button>
         <div class="results" id="results"></div>
     </div>
-    <script>
-        // Placeholder for the ride data
-        const ridesData = [];  // Replace this with your cleaned JSON data
-        
-        // Populate the dropdowns
-        function populateDropdowns(data) {
-            const startStationSet = new Set();
-            const endStationSet = new Set();
-            
-            // Create unique sets of start and end stations
-            data.forEach(ride => {
-                startStationSet.add(ride['Start Station']);
-                endStationSet.add(ride['End Station']);
-            });
-
-            // Populate start station dropdown
-            const startDropdown = document.getElementById('startStation');
-            startStationSet.forEach(station => {
-                const option = document.createElement('option');
-                option.value = station;
-                option.textContent = station;
-                startDropdown.appendChild(option);
-            });
-
-            // Populate end station dropdown
-            const endDropdown = document.getElementById('endStation');
-            endStationSet.forEach(station => {
-                const option = document.createElement('option');
-                option.value = station;
-                option.textContent = station;
-                endDropdown.appendChild(option);
-            });
-        }
-
-        // Display the top 3 fastest times between selected stations
-        function displayFastestTimes() {
-            const startStation = document.getElementById('startStation').value;
-            const endStation = document.getElementById('endStation').value;
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = "";  // Clear previous results
-
-            if (startStation && endStation) {
-                // Filter the data to find matching rides
-                const filteredRides = ridesData.filter(
-                    ride => ride['Start Station'] === startStation && ride['End Station'] === endStation
-                );
-
-                if (filteredRides.length > 0) {
-                    // Create a result card for the fastest times
-                    const resultCard = document.createElement('div');
-                    resultCard.className = 'result-card';
-                    resultCard.innerHTML = `
-                        <h3>Fastest Times: ${startStation} → ${endStation}</h3>
-                        <p>🥇 1st Place: ${filteredRides[0]['1st Place']} seconds</p>
-                        <p>🥈 2nd Place: ${filteredRides[0]['2nd Place']} seconds</p>
-                        <p>🥉 3rd Place: ${filteredRides[0]['3rd Place']} seconds</p>
-                        <p>Total Rides: ${filteredRides[0]['Total Rides']}</p>
-                    `;
-                    resultsDiv.appendChild(resultCard);
-                } else {
-                    resultsDiv.textContent = "No data available for the selected stations.";
-                }
-            } else {
-                resultsDiv.textContent = "Please select both a start and an end station.";
-            }
-        }
-
-        // Event listeners
-        document.getElementById('showTimes').addEventListener('click', displayFastestTimes);
-
-        // On page load, populate the dropdowns (replace `ridesData` with your JSON data)
-        window.onload = () => {
-            populateDropdowns(ridesData);
-        };
-    </script>
+    <script src="dataProcessor.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
