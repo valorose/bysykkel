@@ -60,9 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const startStationFilter = document.getElementById("startStationFilter");
         const endStationFilter = document.getElementById("endStationFilter");
 
-        // Sort station names alphabetically
-        const sortedStations = Object.keys(allStations).sort();
-
         // Filter stations that have more than three trips from station to station
         const startStationsWithEnoughTrips = new Set();
         const endStationsWithEnoughTrips = new Set();
@@ -76,8 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // Convert sets to arrays and sort them alphabetically
+        const sortedStartStations = Array.from(startStationsWithEnoughTrips).sort();
+        const sortedEndStations = Array.from(endStationsWithEnoughTrips).sort();
+
         // Create checkboxes for each start station that meets the trip count condition
-        startStationsWithEnoughTrips.forEach((station) => {
+        sortedStartStations.forEach((station) => {
             let checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.id = `station-${station}`;
@@ -95,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Create checkboxes for each end station that meets the trip count condition
-        endStationsWithEnoughTrips.forEach((station) => {
+        sortedEndStations.forEach((station) => {
             let checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.id = `station-${station}`;
