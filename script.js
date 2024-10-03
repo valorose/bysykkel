@@ -51,48 +51,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Function to dynamically create checkboxes for start and end stations
-    function createCheckboxes() {
-        const startStationFilter = document.getElementById("startStationFilter");
-        const endStationFilter = document.getElementById("endStationFilter");
+   function createCheckboxes() {
+    const startStationFilter = document.getElementById("startStationFilter");
+    const endStationFilter = document.getElementById("endStationFilter");
 
-        // Create checkboxes for each unique station
-        for (const station in allStations) {
-            let checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.id = `station-${station}`;
-            checkbox.value = station;
+    // Sort station names alphabetically
+    const sortedStations = Object.keys(allStations).sort();
 
-            // Label for the checkbox
-            let label = document.createElement("label");
-            label.htmlFor = `station-${station}`;
-            label.textContent = station;
+    // Create checkboxes for each unique station in sorted order
+    sortedStations.forEach((station) => {
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `station-${station}`;
+        checkbox.value = station;
 
-            // Append to the correct filter (start or end)
-            if (allStations[station] === "start") {
-                checkbox.className = "start-checkbox";
-                startStationFilter.appendChild(checkbox);
-                startStationFilter.appendChild(label);
-                startStationFilter.appendChild(document.createElement("br"));
-            } else {
-                checkbox.className = "end-checkbox";
-                endStationFilter.appendChild(checkbox);
-                endStationFilter.appendChild(label);
-                endStationFilter.appendChild(document.createElement("br"));
-            }
+        // Label for the checkbox
+        let label = document.createElement("label");
+        label.htmlFor = `station-${station}`;
+        label.textContent = station;
+
+        // Append to the correct filter (start or end)
+        if (allStations[station] === "start") {
+            checkbox.className = "start-checkbox";
+            startStationFilter.appendChild(checkbox);
+            startStationFilter.appendChild(label);
+            startStationFilter.appendChild(document.createElement("br"));
+        } else {
+            checkbox.className = "end-checkbox";
+            endStationFilter.appendChild(checkbox);
+            endStationFilter.appendChild(label);
+            endStationFilter.appendChild(document.createElement("br"));
         }
+    });
 
-        // Add event listeners for dynamic filtering
-        const startCheckboxes = document.querySelectorAll(".start-checkbox");
-        const endCheckboxes = document.querySelectorAll(".end-checkbox");
+    // Add event listeners for dynamic filtering
+    const startCheckboxes = document.querySelectorAll(".start-checkbox");
+    const endCheckboxes = document.querySelectorAll(".end-checkbox");
 
-        startCheckboxes.forEach((checkbox) =>
-            checkbox.addEventListener("change", () => filterRoutes())
-        );
-        endCheckboxes.forEach((checkbox) =>
-            checkbox.addEventListener("change", () => filterRoutes())
-        );
-    }
+    startCheckboxes.forEach((checkbox) =>
+        checkbox.addEventListener("change", () => filterRoutes())
+    );
+    endCheckboxes.forEach((checkbox) =>
+        checkbox.addEventListener("change", () => filterRoutes())
+    );
+}
 
     // Function to filter routes based on selected start and end stations
     function filterRoutes() {
