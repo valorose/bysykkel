@@ -56,9 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Create checkbox filters for stations
     function createCheckboxes() {
         const startStationFilter = document.getElementById("startStationFilter");
         const endStationFilter = document.getElementById("endStationFilter");
+
+        // Ensure elements exist before attempting to modify them
+        if (!startStationFilter || !endStationFilter) {
+            console.error("Start or End Station filter elements are missing in the HTML.");
+            return;
+        }
 
         const startStationsWithEnoughTrips = new Set();
         const endStationsWithEnoughTrips = new Set();
@@ -117,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+    // Filter routes based on selected start and end stations
     function filterRoutes() {
         const selectedStartStations = Array.from(
             document.querySelectorAll(".start-checkbox:checked")
@@ -136,17 +144,17 @@ document.addEventListener("DOMContentLoaded", () => {
         displayRoutes(filteredRoutes);
     }
 
+    // Display the filtered routes in the table
     function displayRoutes(routes) {
         let tableBody = document.querySelector("#dataTable tbody");
         tableBody.innerHTML = "";
-
-        console.log("Displaying routes:", routes);  // Debugging statement
 
         if (routes.length === 0) {
             tableBody.innerHTML = "<tr><td colspan='4'>No rides available</td></tr>";
             return;
         }
 
+        // Group routes by start-end pairs
         const groupedRoutes = routes.reduce((groups, ride) => {
             const key = `${ride.startStation} -> ${ride.endStation}`;
             if (!groups[key]) {
@@ -156,8 +164,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return groups;
         }, {});
 
+        // Display each group separately
         Object.keys(groupedRoutes).forEach((key) => {
-            groupedRoutes[key].sort((a, b) => a.duration - b.duration);
+            groupedRoutes[key].sort((a, b) => a.duration - b.duration);  // Sort within each group
 
             groupedRoutes[key].forEach((ride, index) => {
                 let row = document.createElement("tr");
@@ -173,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Display a leaderboard with the fastest times for each route
     function displayLeaderboard(routes) {
         let leaderboardBody = document.querySelector("#leaderboardTable tbody");
         leaderboardBody.innerHTML = "";  // Clear existing content
