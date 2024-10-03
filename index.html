@@ -1,70 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bergen BySykkel Speedrunning</title>
+    <title>Bergen BySykkel Speedrun App</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { margin: 20px; }
+        .dropdown-container { margin: 10px 0; }
+        .results { margin-top: 20px; }
+        .result-card { border: 1px solid #ddd; padding: 10px; margin: 5px 0; background-color: #f9f9f9; }
+    </style>
 </head>
 <body>
-    <header>
-        <div id="headerContent">
-            <h1>🚴 Bergen BySykkel Speedrunning</h1>
-            <p>Raskeste turer mellom Bergens sykkelstasjoner!</p>
+    <div class="container">
+        <h1>Bergen BySykkel Speedrun App</h1>
+        <div class="dropdown-container">
+            <label for="startStation">Start Station:</label>
+            <select id="startStation">
+                <option value="">Select Start Station</option>
+            </select>
+            <label for="endStation">End Station:</label>
+            <select id="endStation">
+                <option value="">Select End Station</option>
+            </select>
         </div>
-    </header>
-
-    <section id="banner">
-        <div id="bannerContent">
-            <h2>Oppdag de raskeste sykkelturene i Bergen! 🚴‍♂️</h2>
-            <p>Konkurrer, analyser, og bli kjent med de mest populære rutene i byen.</p>
-        </div>
-    </section>
-
-    <div id="appDescription">
-        <h2>Vi kårer de raskeste BySykkel-turene mellom Bergens populære sykkelstasjoner hver måned!</h2>
-        <p>Er du nysgjerrig på hvem som har satt de raskeste tidene mellom sykkelstasjonene i Bergen? Nå kan du følge med på månedens topp 3 raskeste turer og se om din daglige sykkeltur kan måle seg med Bergens raskeste!</p>
+        <button id="showTimes">Show Fastest Times</button>
+        <div class="results" id="results"></div>
     </div>
+    <script>
+        // Placeholder for the ride data
+        const ridesData = [];  // Replace this with your cleaned JSON data
+        
+        // Populate the dropdowns
+        function populateDropdowns(data) {
+            const startStationSet = new Set();
+            const endStationSet = new Set();
+            
+            // Create unique sets of start and end stations
+            data.forEach(ride => {
+                startStationSet.add(ride['Start Station']);
+                endStationSet.add(ride['End Station']);
+            });
 
-    <button id="loadData">Last inn BySykkel-data</button>
+            // Populate start station dropdown
+            const startDropdown = document.getElementById('startStation');
+            startStationSet.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station;
+                option.textContent = station;
+                startDropdown.appendChild(option);
+            });
 
-    <!-- New Leaderboard Section -->
-    <div id="leaderboard">
-        <h2>🏆 Fastest Routes Leaderboard 🏆</h2>
-        <table id="leaderboardTable">
-            <thead>
-                <tr>
-                    <th>Start Station</th>
-                    <th>End Station</th>
-                    <th>Fastest Time (Seconds)</th>
-                    <th>Total Rides</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Fastest Routes will be displayed here -->
-            </tbody>
-        </table>
-    </div>
+            // Populate end station dropdown
+            const endDropdown = document.getElementById('endStation');
+            endStationSet.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station;
+                option.textContent = station;
+                endDropdown.appendChild(option);
+            });
+        }
 
-    <!-- Data Table Section -->
-    <table id="dataTable">
-        <thead>
-            <tr>
-                <th>Start Stasjon</th>
-                <th>Slutt Stasjon</th>
-                <th>Varighet (sekunder)</th>
-                <th>Rangering</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be dynamically loaded here -->
-        </tbody>
-    </table>
+        // Display the top 3 fastest times between selected stations
+        function displayFastestTimes() {
+            const startStation = document.getElementById('startStation').value;
+            const endStation = document.getElementById('endStation').value;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = "";  // Clear previous results
 
-    <footer>
-        <p>© 2024 Bergen BySykkel Speedrunning. Bygget med entusiasme for dataanalyse og sykkelglede! 🚴‍♂️</p>
-    </footer>
+            if (startStation && endStation) {
+                // Filter the data to find matching rides
+                const filteredRides = ridesData.filter(
+                    ride => ride['Start Station'] === startStation && ride['End Station'] === endStation
+                );
 
-    <script src="script.js"></script>
+                if (filteredRides.length > 0) {
+                    // Create a result card for the fastest times
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'result-card';
+                    resultCard.innerHTML = `
+                        <h3>Fastest Times: ${startStation} → ${endStation}</h3>
+                        <p>🥇 1st Place: ${filteredRides[0]['1st Place']} seconds</p>
+                        <p>🥈 2nd Place: ${filteredRides[0]['2nd Place']} seconds</p>
+                        <p>🥉 3rd Place: ${filteredRides[0]['3rd Place']} seconds</p>
+                        <p>Total Rides: ${filteredRides[0]['Total Rides']}</p>
+                    `;
+                    resultsDiv.appendChild(resultCard);
+                } else {
+                    resultsDiv.textContent = "No data available for the selected stations.";
+                }
+            } else {
+                resultsDiv.textContent = "Please select both a start and an end station.";
+            }
+        }
+
+        // Event listeners
+        document.getElementById('showTimes').addEventListener('click', displayFastestTimes);
+
+        // On page load, populate the dropdowns (replace `ridesData` with your JSON data)
+        window.onload = () => {
+            populateDropdowns(ridesData);
+        };
+    </script>
 </body>
 </html>
