@@ -1,73 +1,143 @@
-// Load the JSON data from the file (assumed to be processed by dataProcessor.js)
-fetch("rides.json")
-    .then(response => response.json())
-    .then(data => {
-        ridesData = data;  // Store data globally for reference
-        populateDropdowns(ridesData);
-    });
-
-// Function to populate dropdowns dynamically
-function populateDropdowns(data) {
-    const startStationSet = new Set();
-    const endStationSet = new Set();
-
-    // Create unique sets of start and end stations
-    data.forEach(ride => {
-        startStationSet.add(ride['Start Station']);
-        endStationSet.add(ride['End Station']);
-    });
-
-    // Populate start station dropdown
-    const startDropdown = document.getElementById('startStation');
-    startStationSet.forEach(station => {
-        const option = document.createElement('option');
-        option.value = station;
-        option.textContent = station;
-        startDropdown.appendChild(option);
-    });
-
-    // Populate end station dropdown
-    const endDropdown = document.getElementById('endStation');
-    endStationSet.forEach(station => {
-        const option = document.createElement('option');
-        option.value = station;
-        option.textContent = station;
-        endDropdown.appendChild(option);
-    });
-}
-
-// Function to display the fastest times
-function displayFastestTimes() {
-    const startStation = document.getElementById('startStation').value;
-    const endStation = document.getElementById('endStation').value;
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = "";  // Clear previous results
-
-    if (startStation && endStation) {
-        // Filter the data to find matching rides
-        const filteredRides = ridesData.filter(
-            ride => ride['Start Station'] === startStation && ride['End Station'] === endStation
-        );
-
-        if (filteredRides.length > 0) {
-            // Create a result card for the fastest times
-            const resultCard = document.createElement('div');
-            resultCard.className = 'result-card';
-            resultCard.innerHTML = `
-                <h3>Fastest Times: ${startStation} → ${endStation}</h3>
-                <p>🥇 1st Place: ${filteredRides[0]['1st Place']} seconds</p>
-                <p>🥈 2nd Place: ${filteredRides[0]['2nd Place']} seconds</p>
-                <p>🥉 3rd Place: ${filteredRides[0]['3rd Place']} seconds</p>
-                <p>Total Rides: ${filteredRides[0]['Total Rides']}</p>
-            `;
-            resultsDiv.appendChild(resultCard);
-        } else {
-            resultsDiv.textContent = "No data available for the selected stations.";
+document.addEventListener("DOMContentLoaded", () => {
+    // Fix Encoding Function
+    function fixEncoding(text) {
+        try {
+            return decodeURIComponent(escape(text));
+        } catch {
+            return text; // In case of an encoding issue, return the original text
         }
-    } else {
-        resultsDiv.textContent = "Please select both a start and an end station.";
     }
-}
 
-// Event listeners
-document.getElementById('showTimes').addEventListener('click', displayFastestTimes);
+    const loadDataButton = document.getElementById("loadData");
+    let topRoutes = [];
+    let stationPairCount = {}; // Track the number of trips between each pair
+
+    loadDataButton.addEventListener("click", async () => {
+        try {
+            console.log("Load Data Button Clicked");  // Debug Log
+            let response = await fetch("rides.json");
+            if (!response.ok) {
+                throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
+            }
+
+            let data = await response.json();
+            topRoutes = [];
+            stationPairCount = {};  // Reset the pair counter
+
+            console.log("Data Successfully Loaded: ", data);  // Debug Log
+
+            // Process and organize the data
+            data.forEach((ride) => {
+                // Apply encoding fix to station names
+                const startStation = fixEncoding(ride.start_station_name);
+                const endStation = fixEncoding(ride.end_station_name);
+
+                if (!startStation || !endStation) {
+                    console.warn("Missing Start or End Station for Ride: ", ride);  // Debug Log
+                    return;
+                }
+
+                // Track the number of trips between each start-end pair
+                const key = `${startStation} -> ${endStation}`;
+                if (!stationPairCount[key]) {
+                    stationPairCount[key] = 0;
+                }
+                stationPairCount[key] += 1;
+
+                topRoutes.push({ startStation, endStation, duration: ride.duration });
+            });
+
+            console.log("Processed Station Pair Count: ", stationPairCount);  // Debug Log
+
+            // Display routes in the main table
+            displayRoutes(topRoutes);
+
+            // Display the leaderboard with the fastest times for each station pair
+            displayLeaderboard(topRoutes);
+
+        } catch (error) {
+            console.error("Error loading data: ", error);
+            alert("Failed to load data. Please try again later.");
+        }
+    });
+
+    function displayRoutes(routes) {
+        let tableBody = document.querySelector("#dataTable tbody");
+
+        if (!tableBody) {
+            console.error("Data Table element is missing in the HTML.");
+            return;
+        }
+
+        tableBody.innerHTML = "";
+
+        if (routes.length === 0) {
+            tableBody.innerHTML = "<tr><td colspan='4'>No rides available</td></tr>";
+            return;
+        }
+
+        const groupedRoutes = routes.reduce((groups, ride) => {
+            const key = `${ride.startStation} -> ${ride.endStation}`;
+            if (!groups[key]) {
+                groups[key] = [];
+            }
+            groups[key].push(ride);
+            return groups;
+        }, {});
+
+        Object.keys(groupedRoutes).forEach((key) => {
+            groupedRoutes[key].sort((a, b) => a.duration - b.duration);
+
+            groupedRoutes[key].forEach((ride, index) => {
+                let row = document.createElement("tr");
+                row.className = index === 0 ? "highlight" : "";
+                row.innerHTML = `
+                    <td>${ride.startStation}</td>
+                    <td>${ride.endStation}</td>
+                    <td>${ride.duration}</td>
+                    <td>${index === 0 ? '🥇 1st Place' : index === 1 ? '🥈 2nd Place' : index === 2 ? '🥉 3rd Place' : ''}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        });
+    }
+
+    function displayLeaderboard(routes) {
+        let leaderboardBody = document.querySelector("#leaderboardTable tbody");
+
+        if (!leaderboardBody) {
+            console.error("Leaderboard Table element is missing in the HTML.");
+            return;
+        }
+
+        leaderboardBody.innerHTML = "";  // Clear existing content
+
+        const groupedRoutes = routes.reduce((groups, ride) => {
+            const key = `${ride.startStation} -> ${ride.endStation}`;
+            if (!groups[key]) {
+                groups[key] = { startStation: ride.startStation, endStation: ride.endStation, fastestTime: ride.duration, totalRides: 1 };
+            } else {
+                groups[key].fastestTime = Math.min(groups[key].fastestTime, ride.duration);
+                groups[key].totalRides += 1;
+            }
+            return groups;
+        }, {});
+
+        // Convert the grouped routes to an array and filter out those with less than 10 rides
+        const filteredRoutes = Object.values(groupedRoutes).filter(route => route.totalRides >= 10);
+
+        // Sort the remaining routes by fastest time
+        const sortedRoutes = filteredRoutes.sort((a, b) => a.fastestTime - b.fastestTime);
+
+        sortedRoutes.forEach(route => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${route.startStation}</td>
+                <td>${route.endStation}</td>
+                <td><strong>${route.fastestTime}</strong></td>
+                <td>${route.totalRides}</td>
+            `;
+            leaderboardBody.appendChild(row);
+        });
+    }
+});
