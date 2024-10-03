@@ -1,7 +1,7 @@
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f5f1;  /* Light green background */
+    background-color: #f0f5f1;
     color: #333;
     margin: 0;
     padding: 0;
@@ -9,7 +9,7 @@ body {
 
 /* Header Styles */
 header {
-    background-color: #5abf41;  /* BySykkel Green */
+    background-color: #5abf41;
     color: white;
     padding: 20px;
     text-align: center;
@@ -31,7 +31,7 @@ header {
     color: white;
     text-align: center;
     padding: 50px 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for banner */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 #banner h2 {
@@ -62,7 +62,7 @@ header {
     display: block;
     margin: 30px auto;
     padding: 15px 40px;
-    background: linear-gradient(45deg, #5abf41, #4aa336);  /* Gradient Green Button */
+    background: linear-gradient(45deg, #5abf41, #4aa336);
     color: white;
     border: none;
     cursor: pointer;
@@ -75,7 +75,7 @@ header {
 #loadData:hover {
     background: linear-gradient(45deg, #4aa336, #399f2b);
     box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);  /* Slight grow on hover */
+    transform: scale(1.05);
 }
 
 /* Filter Section */
@@ -88,7 +88,7 @@ header {
     border: 1px solid #ddd;
     border-radius: 12px;
     max-width: 900px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #startStationFilter, #endStationFilter {
@@ -104,7 +104,7 @@ table {
     background-color: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Deeper shadow for a floating effect */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 th, td {
@@ -114,7 +114,7 @@ th, td {
 }
 
 th {
-    background-color: #5abf41;  /* Green Header */
+    background-color: #5abf41;
     color: white;
     font-weight: bold;
 }
@@ -124,12 +124,55 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-    background-color: #dff4d9;  /* Light green on hover */
+    background-color: #dff4d9;
     transition: background-color 0.3s ease;
 }
 
 .highlight {
     background-color: #d1ecf1;
+}
+
+/* Leaderboard Styles */
+#leaderboard {
+    text-align: center;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    max-width: 900px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#leaderboard h2 {
+    color: #5abf41;
+    font-size: 1.8em;
+}
+
+#leaderboardTable {
+    width: 100%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+#leaderboardTable th, #leaderboardTable td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+#leaderboardTable th {
+    background-color: #4aa336;
+    color: white;
+    font-weight: bold;
+}
+
+#leaderboardTable tr:hover {
+    background-color: #e0f7ea;  /* Light green on hover */
+}
+
+#leaderboardTable td {
+    font-size: 1.1em;
 }
 
 /* Footer Styles */
