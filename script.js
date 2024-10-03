@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadDataButton.addEventListener("click", async () => {
         try {
-            // Update the fetch URL to use the correct file name
             let response = await fetch("rides.json");
             if (!response.ok) {
                 throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
@@ -15,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
             topRoutes = {};
             allStations = {};
 
-            // Create a map to store all unique start and end stations
+            // Process and organize the data
             data.forEach((ride) => {
                 const startStation = ride.start_station_name;
                 const endStation = ride.end_station_name;
@@ -28,15 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     allStations[endStation] = "end";
                 }
 
-                // Organize data for top 3 rides (optional)
+                // Organize data for top 3 rides for each start-end pair
                 const key = `${startStation} - ${endStation}`;
                 if (!topRoutes[key]) {
                     topRoutes[key] = [];
                 }
                 topRoutes[key].push({ startStation, endStation, duration: ride.duration });
-                topRoutes[key].sort((a, b) => a.duration - b.duration);
-                if (topRoutes[key].length > 3) {
-                    topRoutes[key].pop();
+
+                // Remove single occurrence routes from ranking
+                if (topRoutes[key].length > 1) {
+                    topRoutes[key].sort((a, b) => a.duration - b.duration);
+                    if (topRoutes[key].length > 3) {
+                        topRoutes[key].pop();
+                    }
+                } else {
+                    delete topRoutes[key];
                 }
             });
 
@@ -51,50 +56,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-   function createCheckboxes() {
-    const startStationFilter = document.getElementById("startStationFilter");
-    const endStationFilter = document.getElementById("endStationFilter");
+    function createCheckboxes() {
+        const startStationFilter = document.getElementById("startStationFilter");
+        const endStationFilter = document.getElementById("endStationFilter");
 
-    // Sort station names alphabetically
-    const sortedStations = Object.keys(allStations).sort();
+        // Sort station names alphabetically
+        const sortedStations = Object.keys(allStations).sort();
 
-    // Create checkboxes for each unique station in sorted order
-    sortedStations.forEach((station) => {
-        let checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = `station-${station}`;
-        checkbox.value = station;
+        // Create checkboxes for each unique station in sorted order
+        sortedStations.forEach((station) => {
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = `station-${station}`;
+            checkbox.value = station;
 
-        // Label for the checkbox
-        let label = document.createElement("label");
-        label.htmlFor = `station-${station}`;
-        label.textContent = station;
+            // Label for the checkbox
+            let label = document.createElement("label");
+            label.htmlFor = `station-${station}`;
+            label.textContent = station;
 
-        // Append to the correct filter (start or end)
-        if (allStations[station] === "start") {
-            checkbox.className = "start-checkbox";
-            startStationFilter.appendChild(checkbox);
-            startStationFilter.appendChild(label);
-            startStationFilter.appendChild(document.createElement("br"));
-        } else {
-            checkbox.className = "end-checkbox";
-            endStationFilter.appendChild(checkbox);
-            endStationFilter.appendChild(label);
-            endStationFilter.appendChild(document.createElement("br"));
-        }
-    });
+            // Append to the correct filter (start or end)
+            if (allStations[station] === "start") {
+                checkbox.className = "start-checkbox";
+                startStationFilter.appendChild(checkbox);
+                startStationFilter.appendChild(label);
+                startStationFilter.appendChild(document.createElement("br"));
+            } else {
+                checkbox.className = "end-checkbox";
+                endStationFilter.appendChild(checkbox);
+                endStationFilter.appendChild(label);
+                endStationFilter.appendChild(document.createElement("br"));
+            }
+        });
 
-    // Add event listeners for dynamic filtering
-    const startCheckboxes = document.querySelectorAll(".start-checkbox");
-    const endCheckboxes = document.querySelectorAll(".end-checkbox");
+        // Add event listeners for dynamic filtering
+        const startCheckboxes = document.querySelectorAll(".start-checkbox");
+        const endCheckboxes = document.querySelectorAll(".end-checkbox");
 
-    startCheckboxes.forEach((checkbox) =>
-        checkbox.addEventListener("change", () => filterRoutes())
-    );
-    endCheckboxes.forEach((checkbox) =>
-        checkbox.addEventListener("change", () => filterRoutes())
-    );
-}
+        startCheckboxes.forEach((checkbox) =>
+            checkbox.addEventListener("change", () => filterRoutes())
+        );
+        endCheckboxes.forEach((checkbox) =>
+            checkbox.addEventListener("change", () => filterRoutes())
+        );
+    }
 
     // Function to filter routes based on selected start and end stations
     function filterRoutes() {
