@@ -26,6 +26,19 @@
         <p>Er du nysgjerrig på hvem som har satt de raskeste tidene mellom sykkelstasjonene i Bergen? Nå kan du følge med på månedens topp 3 raskeste turer og se om din daglige sykkeltur kan måle seg med Bergens raskeste!</p>
     </div>
 
+    <!-- New Interactive Dropdowns for Station Selection -->
+    <div class="dropdowns">
+        <label for="startStation">Start Station:</label>
+        <select id="startStation">
+            <option value="">Select Start Station</option>
+        </select>
+
+        <label for="endStation">End Station:</label>
+        <select id="endStation">
+            <option value="">Select End Station</option>
+        </select>
+    </div>
+
     <button id="loadData">Last inn BySykkel-data</button>
 
     <!-- New Leaderboard Section -->
@@ -47,13 +60,14 @@
     </div>
 
     <!-- Data Table Section -->
+    <h2>Selected Station Pair Results</h2>
     <table id="dataTable">
         <thead>
             <tr>
-                <th>Start Stasjon</th>
-                <th>Slutt Stasjon</th>
-                <th>Varighet (sekunder)</th>
-                <th>Rangering</th>
+                <th>Start Station</th>
+                <th>End Station</th>
+                <th>Fastest Time (Seconds)</th>
+                <th>Ranking</th>
             </tr>
         </thead>
         <tbody>
