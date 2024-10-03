@@ -123,7 +123,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return groups;
         }, {});
 
-        const sortedRoutes = Object.values(groupedRoutes).sort((a, b) => a.fastestTime - b.fastestTime);
+        // Convert the grouped routes to an array and filter out those with less than 10 rides
+        const filteredRoutes = Object.values(groupedRoutes).filter(route => route.totalRides >= 10);
+
+        // Sort the remaining routes by fastest time
+        const sortedRoutes = filteredRoutes.sort((a, b) => a.fastestTime - b.fastestTime);
 
         sortedRoutes.forEach(route => {
             let row = document.createElement("tr");
