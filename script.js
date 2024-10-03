@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const loadDataButton = document.getElementById("loadData");
-    let topRoutes = []; // Change topRoutes to a flat array for better data handling
+    let topRoutes = [];
     let allStations = {};
+    let stationPairCount = {}; // Track the number of trips between each pair
 
     loadDataButton.addEventListener("click", async () => {
         try {
@@ -11,12 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let data = await response.json();
-            topRoutes = [];  // Reset to an empty array
+            topRoutes = [];
             allStations = {};
+            stationPairCount = {};  // Reset the pair counter
 
             // Process and organize the data
-            console.log("Raw data:", data);  // Debugging statement
-
             data.forEach((ride) => {
                 const startStation = ride.start_station_name;
                 const endStation = ride.end_station_name;
@@ -32,13 +32,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     allStations[endStation] = "end";
                 }
 
+                // Track the number of trips between each start-end pair
+                const key = `${startStation} -> ${endStation}`;
+                if (!stationPairCount[key]) {
+                    stationPairCount[key] = 0;
+                }
+                stationPairCount[key] += 1;
+
                 // Push each ride directly into topRoutes array
                 topRoutes.push({ startStation, endStation, duration: ride.duration });
             });
 
-            console.log("Processed topRoutes:", topRoutes);  // Debugging statement
+            console.log("Station Pair Count:", stationPairCount);  // Debugging statement
 
-            // Display checkboxes for Start and End stations
+            // Display checkboxes for Start and End stations based on the pair count
             createCheckboxes();
 
             // Display full dataset in the table initially
@@ -56,10 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
         // Sort station names alphabetically
         const sortedStations = Object.keys(allStations).sort();
 
-        console.log("Stations for filters:", sortedStations);  // Debugging statement
+        // Filter stations that have more than three trips from station to station
+        const startStationsWithEnoughTrips = new Set();
+        const endStationsWithEnoughTrips = new Set();
 
-        // Create checkboxes for each unique station in sorted order
-        sortedStations.forEach((station) => {
+        // Check each pair and add only stations that meet the threshold
+        for (const key in stationPairCount) {
+            if (stationPairCount[key] >= 3) {
+                const [start, end] = key.split(" -> ");
+                startStationsWithEnoughTrips.add(start);
+                endStationsWithEnoughTrips.add(end);
+            }
+        }
+
+        // Create checkboxes for each start station that meets the trip count condition
+        startStationsWithEnoughTrips.forEach((station) => {
             let checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.id = `station-${station}`;
@@ -70,18 +88,28 @@ document.addEventListener("DOMContentLoaded", () => {
             label.htmlFor = `station-${station}`;
             label.textContent = station;
 
-            // Append to the correct filter (start or end)
-            if (allStations[station] === "start") {
-                checkbox.className = "start-checkbox";
-                startStationFilter.appendChild(checkbox);
-                startStationFilter.appendChild(label);
-                startStationFilter.appendChild(document.createElement("br"));
-            } else {
-                checkbox.className = "end-checkbox";
-                endStationFilter.appendChild(checkbox);
-                endStationFilter.appendChild(label);
-                endStationFilter.appendChild(document.createElement("br"));
-            }
+            checkbox.className = "start-checkbox";
+            startStationFilter.appendChild(checkbox);
+            startStationFilter.appendChild(label);
+            startStationFilter.appendChild(document.createElement("br"));
+        });
+
+        // Create checkboxes for each end station that meets the trip count condition
+        endStationsWithEnoughTrips.forEach((station) => {
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = `station-${station}`;
+            checkbox.value = station;
+
+            // Label for the checkbox
+            let label = document.createElement("label");
+            label.htmlFor = `station-${station}`;
+            label.textContent = station;
+
+            checkbox.className = "end-checkbox";
+            endStationFilter.appendChild(checkbox);
+            endStationFilter.appendChild(label);
+            endStationFilter.appendChild(document.createElement("br"));
         });
 
         // Add event listeners for dynamic filtering
