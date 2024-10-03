@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadDataButton.addEventListener("click", async () => {
         try {
-            let response = await fetch("cleaned_trips.json");
+            // Update the fetch URL to use the correct file name
+            let response = await fetch("rides.json");
             if (!response.ok) {
                 throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
             }
@@ -137,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${ride.startStation}</td>
                     <td>${ride.endStation}</td>
                     <td>${ride.duration}</td>
-                    <td>Rangering ${index + 1}</td>
+                    <td>${index === 0 ? '🥇 1st Place' : index === 1 ? '🥈 2nd Place' : '🥉 3rd Place'}</td>
                 `;
                 tableBody.appendChild(row);
             });
