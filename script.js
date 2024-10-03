@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
         displayRoutes(filteredRoutes);
     }
 
-    // Function to display the routes in the table
+    // Updated Function to display the routes in the table
     function displayRoutes(routes) {
         let tableBody = document.querySelector("#dataTable tbody");
         tableBody.innerHTML = "";
@@ -157,16 +157,31 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        routes.forEach((ride, index) => {
-            let row = document.createElement("tr");
-            row.className = index === 0 ? "highlight" : "";
-            row.innerHTML = `
-                <td>${ride.startStation}</td>
-                <td>${ride.endStation}</td>
-                <td>${ride.duration}</td>
-                <td>${index === 0 ? '🥇 1st Place' : index === 1 ? '🥈 2nd Place' : '🥉 3rd Place'}</td>
-            `;
-            tableBody.appendChild(row);
+        // Group routes by start-end pairs
+        const groupedRoutes = routes.reduce((groups, ride) => {
+            const key = `${ride.startStation} -> ${ride.endStation}`;
+            if (!groups[key]) {
+                groups[key] = [];
+            }
+            groups[key].push(ride);
+            return groups;
+        }, {});
+
+        // Display each group separately
+        Object.keys(groupedRoutes).forEach((key) => {
+            groupedRoutes[key].sort((a, b) => a.duration - b.duration);  // Sort within each group
+
+            groupedRoutes[key].forEach((ride, index) => {
+                let row = document.createElement("tr");
+                row.className = index === 0 ? "highlight" : "";
+                row.innerHTML = `
+                    <td>${ride.startStation}</td>
+                    <td>${ride.endStation}</td>
+                    <td>${ride.duration}</td>
+                    <td>${index === 0 ? '🥇 1st Place' : index === 1 ? '🥈 2nd Place' : index === 2 ? '🥉 3rd Place' : ''}</td>
+                `;
+                tableBody.appendChild(row);
+            });
         });
     }
 });
