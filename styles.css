@@ -78,24 +78,6 @@ header {
     transform: scale(1.05);
 }
 
-/* Filter Section */
-#filters {
-    display: flex;
-    justify-content: space-around;
-    margin: 30px auto;
-    padding: 25px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    max-width: 900px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-#startStationFilter, #endStationFilter {
-    flex: 1;
-    padding: 15px;
-}
-
 /* Table Styles */
 table {
     width: 80%;
