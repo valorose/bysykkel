@@ -115,10 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const groupedRoutes = routes.reduce((groups, ride) => {
             const key = `${ride.startStation} -> ${ride.endStation}`;
             if (!groups[key]) {
-                groups[key] = { startStation: ride.startStation, endStation: ride.endStation, fastestTime: ride.duration, totalRides: 0 };
+                groups[key] = { startStation: ride.startStation, endStation: ride.endStation, fastestTime: ride.duration, totalRides: 1 };
+            } else {
+                groups[key].fastestTime = Math.min(groups[key].fastestTime, ride.duration);
+                groups[key].totalRides += 1;
             }
-            groups[key].fastestTime = Math.min(groups[key].fastestTime, ride.duration);
-            groups[key].totalRides += 1;
             return groups;
         }, {});
 
