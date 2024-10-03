@@ -15,9 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
             allStations = {};
 
             // Process and organize the data
+            console.log("Raw data:", data);  // Debugging statement
+
             data.forEach((ride) => {
                 const startStation = ride.start_station_name;
                 const endStation = ride.end_station_name;
+
+                // Skip rides that have missing station names
+                if (!startStation || !endStation) return;
 
                 // Store unique stations
                 if (!allStations[startStation]) {
@@ -45,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
+            console.log("Processed topRoutes:", topRoutes);  // Debugging statement
+
             // Display checkboxes for Start and End stations
             createCheckboxes();
 
@@ -62,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Sort station names alphabetically
         const sortedStations = Object.keys(allStations).sort();
+
+        console.log("Stations for filters:", sortedStations);  // Debugging statement
 
         // Create checkboxes for each unique station in sorted order
         sortedStations.forEach((station) => {
@@ -113,6 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const filteredRoutes = {};
 
+        console.log("Selected start stations:", selectedStartStations);  // Debugging statement
+        console.log("Selected end stations:", selectedEndStations);  // Debugging statement
+
         for (const key in topRoutes) {
             topRoutes[key].forEach((ride) => {
                 if (
@@ -127,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        console.log("Filtered routes:", filteredRoutes);  // Debugging statement
         displayRoutes(filteredRoutes);
     }
 
@@ -135,7 +148,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let tableBody = document.querySelector("#dataTable tbody");
         tableBody.innerHTML = "";
 
+        console.log("Displaying routes:", routes);  // Debugging statement
+
         const sortedKeys = Object.keys(routes).sort();
+
+        if (sortedKeys.length === 0) {
+            tableBody.innerHTML = "<tr><td colspan='4'>No rides available</td></tr>";
+            return;
+        }
 
         sortedKeys.forEach((key) => {
             routes[key].forEach((ride, index) => {
