@@ -64,6 +64,22 @@
             font-size: 1em;
         }
 
+        #filters {
+            display: flex;
+            justify-content: space-evenly;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 800px;
+        }
+
+        #startStationFilter, #endStationFilter {
+            flex: 1;
+            padding: 10px;
+        }
+
         table {
             width: 100%;
             margin: 20px 0;
@@ -117,8 +133,17 @@
 
     <button id="loadData">Last inn BySykkel-data</button>
 
-    <!-- Add a search input field here -->
-    <input type="text" id="searchInput" placeholder="Søk etter start- eller sluttstasjon..." />
+    <!-- Add new checkbox filter elements here -->
+    <div id="filters">
+        <div id="startStationFilter">
+            <h3>Start Station</h3>
+            <!-- Checkboxes for Start Stations will be dynamically added here -->
+        </div>
+        <div id="endStationFilter">
+            <h3>End Station</h3>
+            <!-- Checkboxes for End Stations will be dynamically added here -->
+        </div>
+    </div>
 
     <table id="dataTable">
         <thead>
