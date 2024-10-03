@@ -7,7 +7,6 @@
     <title>Bergen BySykkel Speedrunning</title>
 </head>
 <body>
-    <!-- Header Section with Navigation and Banner -->
     <header>
         <div id="headerContent">
             <h1>🚴 Bergen BySykkel Speedrunning</h1>
@@ -15,7 +14,6 @@
         </div>
     </header>
 
-    <!-- Banner Section -->
     <section id="banner">
         <div id="bannerContent">
             <h2>Oppdag de raskeste sykkelturene i Bergen! 🚴‍♂️</h2>
@@ -30,28 +28,23 @@
 
     <button id="loadData">Last inn BySykkel-data</button>
 
-    <div id="filters">
-        <div id="startStationFilter">
-            <h3>Start Station</h3>
-        </div>
-        <div id="endStationFilter">
-            <h3>End Station</h3>
-        </div>
+    <!-- New Leaderboard Section -->
+    <div id="leaderboard">
+        <h2>🏆 Fastest Routes Leaderboard 🏆</h2>
+        <table id="leaderboardTable">
+            <thead>
+                <tr>
+                    <th>Start Station</th>
+                    <th>End Station</th>
+                    <th>Fastest Time (Seconds)</th>
+                    <th>Total Rides</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fastest Routes will be displayed here -->
+            </tbody>
+        </table>
     </div>
-
-    <table id="dataTable">
-        <thead>
-            <tr>
-                <th>Start Stasjon</th>
-                <th>Slutt Stasjon</th>
-                <th>Varighet (sekunder)</th>
-                <th>Rangering</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be dynamically loaded here -->
-        </tbody>
-    </table>
 
     <footer>
         <p>© 2024 Bergen BySykkel Speedrunning. Bygget med entusiasme for dataanalyse og sykkelglede! 🚴‍♂️</p>
