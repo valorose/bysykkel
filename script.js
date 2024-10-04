@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
             stations.forEach(station => {
                 const marker = L.marker([station.lat, station.lon]).addTo(map);
                 marker.bindPopup(`<strong>${station.name}</strong><br>${station.address}`);
-                
+
                 marker.on('click', () => handleStationClick(station));
             });
         })
@@ -59,15 +59,27 @@ document.addEventListener("DOMContentLoaded", () => {
         if (matchingRides.length > 0) {
             const sortedRides = matchingRides.sort((a, b) => a.duration - b.duration);
             const topRides = sortedRides.slice(0, 3);
-
-            let resultText = `<strong>Fastest Times from ${selectedStartStation.name} to ${selectedEndStation.name}:</strong><br>`;
-            topRides.forEach((ride, index) => {
-                resultText += `${index + 1}. ${ride.duration} seconds<br>`;
-            });
-
-            alert(resultText); // You can also display this in a dedicated sidebar or div
+            updateFastestTimesDisplay(topRides);
         } else {
-            alert(`No ride data available between ${selectedStartStation.name} and ${selectedEndStation.name}.`);
+            document.getElementById('podium').innerHTML = `<p>No ride data available between ${selectedStartStation.name} and ${selectedEndStation.name}.</p>`;
         }
+    }
+
+    // Update the podium display for fastest times
+    function updateFastestTimesDisplay(topRides) {
+        const podiumContainer = document.getElementById('podium');
+        podiumContainer.innerHTML = '';
+
+        const podiumLabels = ['gold', 'silver', 'bronze'];
+
+        topRides.forEach((ride, index) => {
+            const podiumItem = document.createElement('div');
+            podiumItem.className = `podium-item ${podiumLabels[index]}`;
+            podiumItem.innerHTML = `
+                <span>${index + 1}.</span>
+                ${ride.duration} seconds
+            `;
+            podiumContainer.appendChild(podiumItem);
+        });
     }
 });
