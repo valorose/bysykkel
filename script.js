@@ -73,11 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const podiumLabels = ['gold', 'silver', 'bronze'];
 
         topRides.forEach((ride, index) => {
+            const durationInMinutes = (ride.duration / 60).toFixed(2);
             const podiumItem = document.createElement('div');
             podiumItem.className = `podium-item ${podiumLabels[index]}`;
             podiumItem.innerHTML = `
                 <span>${index + 1}.</span>
-                ${ride.duration} seconds
+                ${durationInMinutes} minutes
             `;
             podiumContainer.appendChild(podiumItem);
         });
