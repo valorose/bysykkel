@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const stationDataUrl = "cleaned_leaderboard.json";  // Ensure path is correct and file is uploaded
+  const stationDataUrl = "cleaned_leaderboard.json";  // Ensure path is correct
   let routesData = [];
   let selectedStartStation = null;
   let selectedEndStation = null;
-  let routeLine;
   const markers = new Map();
-  const routeCache = new Map();
 
   // Initialize the map centered on Bergen
   const map = L.map('map').setView([60.3913, 5.3221], 13);
@@ -15,49 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("Map initialized successfully");
 
-  // Create a sidebar to display the top 3 times
-  const sidebar = document.createElement('div');
-  sidebar.id = 'routeInfo';
-  sidebar.style.width = '300px';
-  sidebar.style.height = '200px';
-  sidebar.style.position = 'absolute';
-  sidebar.style.top = '10px';
-  sidebar.style.right = '10px';
-  sidebar.style.backgroundColor = '#fff';
-  sidebar.style.padding = '10px';
-  sidebar.style.border = '1px solid #ccc';
-  document.body.appendChild(sidebar);
-
-  // Create loading indicator
-  const loadingIndicator = document.createElement('div');
-  loadingIndicator.id = 'loadingIndicator';
-  loadingIndicator.style.display = 'none';
-  loadingIndicator.textContent = 'Loading...';
-  loadingIndicator.style.position = 'absolute';
-  loadingIndicator.style.top = '50%';
-  loadingIndicator.style.left = '50%';
-  loadingIndicator.style.transform = 'translate(-50%, -50%)';
-  loadingIndicator.style.padding = '10px';
-  loadingIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-  loadingIndicator.style.borderRadius = '5px';
-  document.body.appendChild(loadingIndicator);
-
-  console.log("Loading JSON data...");
-  
   // Load the JSON file and parse the data
-  loadingIndicator.style.display = 'block';
   fetch(stationDataUrl)
     .then(response => response.json())
     .then(data => {
       console.log("Data loaded successfully:", data);  // Confirm data is loaded
       routesData = data;
       displayStationsOnMap(routesData);
-      loadingIndicator.style.display = 'none';
     })
     .catch(error => {
       console.error('Error fetching data:', error);
-      loadingIndicator.style.display = 'none';
-      sidebar.innerHTML = 'Error loading data. Please try again later.';
     });
 
   // Display stations on the map
@@ -99,40 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle station click event to set start and end stations
   function handleStationClick(stationId, stationName, marker) {
     console.log(`Station Clicked: ${stationName}, ID: ${stationId}`);
-    if (!selectedStartStation) {
-      selectedStartStation = { id: stationId, name: stationName };
-      marker.setIcon(L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png' }));
-      sidebar.innerHTML = `Start Station Selected: <strong>${stationName}</strong><br>Select an end station.`;
-    } else if (!selectedEndStation) {
-      selectedEndStation = { id: stationId, name: stationName };
-      marker.setIcon(L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' }));
-      sidebar.innerHTML = `End Station Selected: <strong>${stationName}</strong><br>Loading top 3 times...`;
-      showTopTimes(selectedStartStation.id, selectedEndStation.id);
-    } else {
-      markers.get(selectedStartStation.id).setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png' }));
-      markers.get(selectedEndStation.id).setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png' }));
-      selectedStartStation = { id: stationId, name: stationName };
-      selectedEndStation = null;
-      marker.setIcon(L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png' }));
-      sidebar.innerHTML = `New Start Station Selected: <strong>${stationName}</strong><br>Select an end station.`;
-    }
-  }
-
-  // Display top 3 times between the selected stations
-  function showTopTimes(startStationId, endStationId) {
-    const top3Routes = routesData
-      .filter(route => route.start_station_id === startStationId && route.end_station_id === endStationId)
-      .sort((a, b) => a.duration - b.duration)
-      .slice(0, 3);
-
-    if (top3Routes.length > 0) {
-      let timesText = `<strong>Top 3 Times from ${selectedStartStation.name} to ${selectedEndStation.name}:</strong><br>`;
-      top3Routes.forEach((route, index) => {
-        timesText += `${index + 1}. ${route.duration} seconds<br>`;
-      });
-      sidebar.innerHTML = timesText;
-    } else {
-      sidebar.innerHTML = `No data available for the route from ${selectedStartStation.name} to ${selectedEndStation.name}.`;
-    }
+    // Your existing logic for handling clicks...
   }
 });
