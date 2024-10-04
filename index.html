@@ -96,6 +96,21 @@
                 podiumContainer.appendChild(podiumItem);
             });
         }
+
+        // Modify showFastestTimes function to update podium display
+        function showFastestTimes(startId, endId) {
+            const matchingRides = ridesData.filter(ride =>
+                ride.start_station_id === startId && ride.end_station_id === endId
+            );
+
+            if (matchingRides.length > 0) {
+                const sortedRides = matchingRides.sort((a, b) => a.duration - b.duration);
+                const topRides = sortedRides.slice(0, 3);
+                updateFastestTimesDisplay(topRides);
+            } else {
+                alert(`No ride data available between ${selectedStartStation.name} and ${selectedEndStation.name}.`);
+            }
+        }
     </script>
 </body>
 </html>
