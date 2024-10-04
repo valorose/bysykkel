@@ -1,21 +1,34 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #3498db;
-    color: white;
-    text-align: center;
-    padding: 20px;
-}
-
 #map-container {
-    height: 80vh; /* Ensure the map is visible */
+    display: flex;
+    height: 80vh; /* Adjust the height for visibility */
 }
 
 #map {
+    flex: 3;
     height: 100%;
-    width: 100%;
+}
+
+#info-box {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+#info-box h2 {
+    color: #3498db;
+}
+
+#info-box p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+#fastest-times {
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
