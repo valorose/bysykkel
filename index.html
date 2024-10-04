@@ -39,14 +39,14 @@
         #map-container {
             display: flex;
             flex-direction: column;
-            height: 60vh;
+            height: calc(100vh - 300px);
             margin-top: 20px;
             padding: 0 10px;
         }
 
         #map {
             flex: 1;
-            height: 60vh;
+            height: 100%;
             width: 100%;
             border-radius: 8px;
         }
@@ -159,11 +159,11 @@
             }
 
             #map-container {
-                height: auto;
+                height: 50vh;
             }
 
             #map {
-                height: 50vh;
+                height: 100%;
             }
 
             #info-box {
@@ -292,17 +292,4 @@
                 const podiumLabels = ['gold', 'silver', 'bronze'];
 
                 topRides.forEach((ride, index) => {
-                    const durationInMinutes = (ride.duration / 60).toFixed(2);
-                    const podiumItem = document.createElement('div');
-                    podiumItem.className = `podium-item ${podiumLabels[index]}`;
-                    podiumItem.innerHTML = `
-                        <span>${index + 1}.</span>
-                        ${durationInMinutes} minutes
-                    `;
-                    podiumContainer.appendChild(podiumItem);
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+                    const durationInMinutes = (
