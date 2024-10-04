@@ -1,132 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oslo Bysykkel Fastest Routes</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        #map { height: 600px; width: 70%; float: left; }
-        #details { width: 30%; float: left; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #4CAF50; color: white; }
-        select, button { margin: 5px 0; padding: 5px; }
-        .highlight { background-color: #ffffcc; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bergen Day Trip Planner</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 600px; width: 100%; }
+  </style>
 </head>
 <body>
-    <div id="map"></div>
-    <div id="details">
-        <h2>View Fastest Times Between Stations</h2>
-        <button id="loadData">Load Data</button>
-        <br />
-        <label for="startStation">Start Station: </label>
-        <select id="startStation"><option value="">Select Start</option></select>
-        <br />
-        <label for="endStation">End Station: </label>
-        <select id="endStation"><option value="">Select End</option></select>
-        <br />
-        <table id="dataTable">
-            <thead>
-                <tr><th>Start</th><th>End</th><th>Duration (s)</th></tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="3">No data loaded</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            function fixEncoding(text) {
-                try {
-                    return decodeURIComponent(escape(text));
-                } catch {
-                    return text;
-                }
-            }
-
-            const loadDataButton = document.getElementById("loadData");
-            let topRoutes = [];
-            let stationPairCount = {};
-
-            loadDataButton.addEventListener("click", async () => {
-                try {
-                    let response = await fetch("rides.json");
-                    if (!response.ok) throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
-
-                    let data = await response.json();
-                    topRoutes = [];
-                    stationPairCount = {};
-
-                    data.forEach((ride) => {
-                        const startStation = fixEncoding(ride.start_station_name);
-                        const endStation = fixEncoding(ride.end_station_name);
-                        if (!startStation || !endStation) return;
-
-                        const key = `${startStation} -> ${endStation}`;
-                        if (!stationPairCount[key]) stationPairCount[key] = 0;
-                        stationPairCount[key] += 1;
-
-                        topRoutes.push({ startStation, endStation, duration: ride.duration });
-                    });
-
-                    populateDropdowns(stationPairCount);
-                } catch (error) {
-                    console.error("Error loading data: ", error);
-                    alert("Failed to load data. Please try again later.");
-                }
-            });
-
-            function populateDropdowns(stationPairs) {
-                const startDropdown = document.getElementById("startStation");
-                const endDropdown = document.getElementById("endStation");
-                startDropdown.innerHTML = '<option value="">Select Start</option>';
-                endDropdown.innerHTML = '<option value="">Select End</option>';
-
-                Object.keys(stationPairs).forEach(pair => {
-                    const [startStation, endStation] = pair.split(" -> ");
-                    if (!startDropdown.querySelector(`option[value="${startStation}"]`)) {
-                        startDropdown.appendChild(new Option(startStation, startStation));
-                    }
-                    if (!endDropdown.querySelector(`option[value="${endStation}"]`)) {
-                        endDropdown.appendChild(new Option(endStation, endStation));
-                    }
-                });
-
-                startDropdown.addEventListener("change", displayRoutes);
-                endDropdown.addEventListener("change", displayRoutes);
-            }
-
-            function displayRoutes() {
-                const startStation = document.getElementById("startStation").value;
-                const endStation = document.getElementById("endStation").value;
-                const tableBody = document.querySelector("#dataTable tbody");
-                tableBody.innerHTML = "";
-
-                if (!startStation || !endStation) {
-                    tableBody.innerHTML = "<tr><td colspan='3'>Select both start and end stations</td></tr>";
-                    return;
-                }
-
-                const filteredRoutes = topRoutes.filter(route => route.startStation === startStation && route.endStation === endStation);
-
-                if (filteredRoutes.length === 0) {
-                    tableBody.innerHTML = "<tr><td colspan='3'>No rides available between these stations</td></tr>";
-                    return;
-                }
-
-                filteredRoutes.sort((a, b) => a.duration - b.duration);
-                filteredRoutes.forEach((ride, index) => {
-                    let row = document.createElement("tr");
-                    row.className = index === 0 ? "highlight" : "";
-                    row.innerHTML = `<td>${ride.startStation}</td><td>${ride.endStation}</td><td>${ride.duration}</td>`;
-                    tableBody.appendChild(row);
-                });
-            }
-        });
-    </script>
+  <h1>Bergen BySykkel Day Trip Planner</h1>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
