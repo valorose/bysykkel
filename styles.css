@@ -1,1 +1,21 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
+header {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+#map-container {
+    height: 80vh; /* Ensure the map is visible */
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
