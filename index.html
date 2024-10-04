@@ -1,120 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bysykkel Speedrun Map</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    #map { height: 600px; width: 70%; float: left; }
-    #details { width: 30%; float: left; padding: 20px; }
-    h2 { font-family: Arial, sans-serif; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-    th { background-color: #4CAF50; color: white; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oslo Bysykkel Fastest Routes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 70%; float: left; }
+        #details { width: 30%; float: left; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #4CAF50; color: white; }
+        select, button { margin: 5px 0; padding: 5px; }
+        .highlight { background-color: #ffffcc; }
+    </style>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="details">
-    <h2>Fastest Times Between Selected Stations</h2>
-    <p id="selectedStations">Click on two stations to see the fastest time between them.</p>
-    <table>
-      <thead>
-        <tr><th>Start</th><th>End</th><th>Duration (s)</th><th>Date</th></tr>
-      </thead>
-      <tbody id="fastestTimes">
-        <tr><td colspan="4">Select two stations</td></tr>
-      </tbody>
-    </table>
-  </div>
+    <div id="map"></div>
+    <div id="details">
+        <h2>View Fastest Times Between Stations</h2>
+        <button id="loadData">Load Data</button>
+        <br />
+        <label for="startStation">Start Station: </label>
+        <select id="startStation"><option value="">Select Start</option></select>
+        <br />
+        <label for="endStation">End Station: </label>
+        <select id="endStation"><option value="">Select End</option></select>
+        <br />
+        <table id="dataTable">
+            <thead>
+                <tr><th>Start</th><th>End</th><th>Duration (s)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="3">No data loaded</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // Initialize the map centered on Oslo
-    var map = L.map('map').setView([59.9139, 10.7522], 13);
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            function fixEncoding(text) {
+                try {
+                    return decodeURIComponent(escape(text));
+                } catch {
+                    return text;
+                }
+            }
 
-    // Add OpenStreetMap tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+            const loadDataButton = document.getElementById("loadData");
+            let topRoutes = [];
+            let stationPairCount = {};
 
-    // Station Data
-    var stations = [
-      { id: 1, name: 'Stortorvet', lat: 59.9125, lon: 10.7415 },
-      { id: 2, name: 'Jernbanetorget', lat: 59.9110, lon: 10.7503 },
-      { id: 3, name: 'Nationaltheatret', lat: 59.9142, lon: 10.7313 }
-    ];
+            loadDataButton.addEventListener("click", async () => {
+                try {
+                    let response = await fetch("rides.json");
+                    if (!response.ok) throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
 
-    // Add station markers to the map
-    stations.forEach(function(station) {
-      var marker = L.marker([station.lat, station.lon]).addTo(map);
-      marker.bindPopup(`<b>${station.name}</b><br><button onclick="selectStation(${station.id})">Select Station</button>`);
-    });
+                    let data = await response.json();
+                    topRoutes = [];
+                    stationPairCount = {};
 
-    // Variables to store selected stations
-    var selectedStartStation = null;
-    var selectedEndStation = null;
+                    data.forEach((ride) => {
+                        const startStation = fixEncoding(ride.start_station_name);
+                        const endStation = fixEncoding(ride.end_station_name);
+                        if (!startStation || !endStation) return;
 
-    // Load the ride data from a local JSON file
-    var rideData;
-    fetch('rides.json')
-      .then(response => response.json())
-      .then(data => {
-        rideData = data;
-      });
+                        const key = `${startStation} -> ${endStation}`;
+                        if (!stationPairCount[key]) stationPairCount[key] = 0;
+                        stationPairCount[key] += 1;
 
-    // Function to select a station
-    function selectStation(stationId) {
-      if (selectedStartStation === null) {
-        selectedStartStation = stationId;
-        updateSelectedStations();
-      } else if (selectedEndStation === null) {
-        selectedEndStation = stationId;
-        updateSelectedStations();
-        showFastestTimes();
-      } else {
-        // Reset selections if both are already selected
-        selectedStartStation = stationId;
-        selectedEndStation = null;
-        updateSelectedStations();
-      }
-    }
+                        topRoutes.push({ startStation, endStation, duration: ride.duration });
+                    });
 
-    // Update UI to show selected stations
-    function updateSelectedStations() {
-      var startStationName = selectedStartStation !== null ? stations.find(s => s.id === selectedStartStation).name : "None";
-      var endStationName = selectedEndStation !== null ? stations.find(s => s.id === selectedEndStation).name : "None";
-      document.getElementById("selectedStations").innerHTML = `Start Station: ${startStationName} | End Station: ${endStationName}`;
-    }
+                    populateDropdowns(stationPairCount);
+                } catch (error) {
+                    console.error("Error loading data: ", error);
+                    alert("Failed to load data. Please try again later.");
+                }
+            });
 
-    // Function to show fastest times between selected stations
-    function showFastestTimes() {
-      if (selectedStartStation === null || selectedEndStation === null) {
-        return;
-      }
+            function populateDropdowns(stationPairs) {
+                const startDropdown = document.getElementById("startStation");
+                const endDropdown = document.getElementById("endStation");
+                startDropdown.innerHTML = '<option value="">Select Start</option>';
+                endDropdown.innerHTML = '<option value="">Select End</option>';
 
-      // Find station names
-      var startStationName = stations.find(s => s.id === selectedStartStation).name;
-      var endStationName = stations.find(s => s.id === selectedEndStation).name;
+                Object.keys(stationPairs).forEach(pair => {
+                    const [startStation, endStation] = pair.split(" -> ");
+                    if (!startDropdown.querySelector(`option[value="${startStation}"]`)) {
+                        startDropdown.appendChild(new Option(startStation, startStation));
+                    }
+                    if (!endDropdown.querySelector(`option[value="${endStation}"]`)) {
+                        endDropdown.appendChild(new Option(endStation, endStation));
+                    }
+                });
 
-      // Filter ride data for selected start and end stations
-      var filteredData = rideData.filter(ride => ride.start_station === startStationName && ride.end_station === endStationName);
+                startDropdown.addEventListener("change", displayRoutes);
+                endDropdown.addEventListener("change", displayRoutes);
+            }
 
-      // Sort by duration (ascending) and take top 1 (fastest time)
-      var fastestTime = filteredData.sort((a, b) => a.duration - b.duration)[0];
+            function displayRoutes() {
+                const startStation = document.getElementById("startStation").value;
+                const endStation = document.getElementById("endStation").value;
+                const tableBody = document.querySelector("#dataTable tbody");
+                tableBody.innerHTML = "";
 
-      // Display the fastest time in the details table
-      var tableBody = document.getElementById('fastestTimes');
-      tableBody.innerHTML = ''; // Clear current rows
+                if (!startStation || !endStation) {
+                    tableBody.innerHTML = "<tr><td colspan='3'>Select both start and end stations</td></tr>";
+                    return;
+                }
 
-      if (fastestTime) {
-        var row = `<tr><td>${fastestTime.start_station}</td><td>${fastestTime.end_station}</td><td>${fastestTime.duration}</td><td>${fastestTime.date}</td></tr>`;
-        tableBody.innerHTML += row;
-      } else {
-        tableBody.innerHTML = '<tr><td colspan="4">No trips found between selected stations</td></tr>';
-      }
-    }
-  </script>
+                const filteredRoutes = topRoutes.filter(route => route.startStation === startStation && route.endStation === endStation);
+
+                if (filteredRoutes.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='3'>No rides available between these stations</td></tr>";
+                    return;
+                }
+
+                filteredRoutes.sort((a, b) => a.duration - b.duration);
+                filteredRoutes.forEach((ride, index) => {
+                    let row = document.createElement("tr");
+                    row.className = index === 0 ? "highlight" : "";
+                    row.innerHTML = `<td>${ride.startStation}</td><td>${ride.endStation}</td><td>${ride.duration}</td>`;
+                    tableBody.appendChild(row);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
