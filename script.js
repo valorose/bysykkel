@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const stationDataUrl = "10 (2).json";  // Path to the new JSON file
+  const stationDataUrl = "cleaned_leaderboard.json";  // Path to the new JSON file
   let routesData = [];
   let selectedStartStation = null;
   let selectedEndStation = null;
