@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bergen BySykkel Speedrunning</title>
+    <title>Bergen BySykkel Fartsutfordring</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
@@ -189,25 +189,25 @@
 </head>
 <body>
     <header>
-        <h1>Bergen BySykkel Speedrunning</h1>
+        <h1>Bergen BySykkel Fartsutfordring</h1>
         <p>Vi kårer de raskeste BySykkel-turene mellom Bergens populære sykkelstasjoner hver måned!</p>
     </header>
     <div id="map-container">
         <div id="map"></div>
         <div id="info-box">
             <div id="fastest-times-container">
-                <h3>Fastest Times</h3>
+                <h3>Raskeste Tider</h3>
                 <div id="podium" class="podium">
                     <!-- The podium items will be added here dynamically -->
                 </div>
             </div>
             <div id="common-routes-container">
-                <!-- The most common routes will be added here dynamically -->
+                <!-- De mest populære rutene vil bli lagt til her dynamisk -->
             </div>
         </div>
     </div>
     <footer>
-        <p>Explore the bike stations in Bergen and become the fastest rider!</p>
+        <p>Utforsk sykkelstasjonene i Bergen og bli den raskeste syklisten!</p>
     </footer>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
@@ -280,7 +280,7 @@
                     const topRides = sortedRides.slice(0, 3);
                     updateFastestTimesDisplay(topRides);
                 } else {
-                    document.getElementById('podium').innerHTML = `<p>No ride data available between ${selectedStartStation.name} and ${selectedEndStation.name}.</p>`;
+                    document.getElementById('podium').innerHTML = `<p>Ingen turdata tilgjengelig mellom ${selectedStartStation.name} og ${selectedEndStation.name}.</p>`;
                 }
             }
 
@@ -292,4 +292,22 @@
                 const podiumLabels = ['gold', 'silver', 'bronze'];
 
                 topRides.forEach((ride, index) => {
-                    const durationInMinutes = (
+                    const durationInMinutes = Math.round(ride.duration / 60);
+                    const podiumItem = document.createElement('div');
+                    podiumItem.classList.add('podium-item', podiumLabels[index]);
+                    podiumItem.innerHTML = `<span>${index + 1}</span>${durationInMinutes} minutter`;
+                    podiumContainer.appendChild(podiumItem);
+                });
+            }
+
+            // Display most common routes
+            function displayMostCommonRoutes(ridesData) {
+                const commonRoutesContainer = document.getElementById('common-routes-container');
+                commonRoutesContainer.innerHTML = '<h3>De mest populære rutene</h3>';
+
+                // Additional implementation here...
+            }
+        });
+    </script>
+</body>
+</html>
