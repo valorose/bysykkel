@@ -118,3 +118,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Display top 3 times between the selected stations
+  function showTopTimes(startStationId, endStationId) {
+    const top3Routes = routesData
+      .filter(route => route.start_station_id === startStationId && route.end_station_id === endStationId)
+      .sort((a, b) => a.duration - b.duration)
+      .slice(0, 3);
+
+    if (top3Routes.length > 0) {
+      let timesText = `<strong>Top 3 Times from ${selectedStartStation.name} to ${selectedEndStation.name}:</strong><br>`;
+      top3Routes.forEach((route, index) => {
+        timesText += `${index + 1}. ${route.duration} seconds<br>`;
+      });
+      sidebar.innerHTML = timesText;
+    } else {
+      sidebar.innerHTML = `No data available for the route from ${selectedStartStation.name} to ${selectedEndStation.name}.`;
+    }
+  }
+});
