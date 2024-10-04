@@ -6,6 +6,58 @@
     <title>Bergen BySykkel Stations</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        /* Podium style for fastest times */
+        .podium {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .podium-item {
+            text-align: center;
+            font-size: 1.2em;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .podium-item.gold {
+            background-color: #d4af37;
+            color: #fff;
+        }
+
+        .podium-item.silver {
+            background-color: #c0c0c0;
+            color: #fff;
+        }
+
+        .podium-item.bronze {
+            background-color: #cd7f32;
+            color: #fff;
+        }
+
+        .podium-item span {
+            display: block;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        #fastest-times-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f7e8;
+            border-radius: 8px;
+            border-left: 5px solid #3bb143; /* Green color similar to BySykkel */
+        }
+
+        #fastest-times-container h3 {
+            color: #3bb143;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -13,11 +65,37 @@
     </header>
     <div id="map-container">
         <div id="map"></div>
+        <div id="info-box">
+            <div id="fastest-times-container">
+                <h3>Fastest Times</h3>
+                <div id="podium" class="podium">
+                    <!-- The podium items will be added here dynamically -->
+                </div>
+            </div>
+        </div>
     </div>
     <footer>
         <p>Explore the bike stations in Bergen!</p>
     </footer>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
+    <script>
+        function updateFastestTimesDisplay(topRides) {
+            const podiumContainer = document.getElementById('podium');
+            podiumContainer.innerHTML = '';
+
+            const podiumLabels = ['gold', 'silver', 'bronze'];
+
+            topRides.forEach((ride, index) => {
+                const podiumItem = document.createElement('div');
+                podiumItem.className = `podium-item ${podiumLabels[index]}`;
+                podiumItem.innerHTML = `
+                    <span>${index + 1}.</span>
+                    ${ride.duration} seconds
+                `;
+                podiumContainer.appendChild(podiumItem);
+            });
+        }
+    </script>
 </body>
 </html>
