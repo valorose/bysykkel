@@ -1,0 +1,370 @@
+[
+    {
+        "Start Station": "Torget",
+        "End Station": "Bergen jernbanestasjon",
+        "1st Place": 206,
+        "2nd Place": 213,
+        "3rd Place": 255,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Thorm\u00c3\u00b8hlens gate",
+        "End Station": "Florida Bybanestopp",
+        "1st Place": 121,
+        "2nd Place": 138,
+        "3rd Place": 151,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Nykirken",
+        "End Station": "Sm\u00c3\u00a5strandgaten",
+        "1st Place": 250,
+        "2nd Place": 254,
+        "3rd Place": 258,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Bergen jernbanestasjon",
+        "End Station": "Nykirken",
+        "1st Place": 363,
+        "2nd Place": 391,
+        "3rd Place": 410,
+        "Total Rides": 8
+    },
+    {
+        "Start Station": "Nykirken",
+        "End Station": "Torgallmenningen",
+        "1st Place": 210,
+        "2nd Place": 215,
+        "3rd Place": 222,
+        "Total Rides": 12
+    },
+    {
+        "Start Station": "Festplassen",
+        "End Station": "C. Sundts gate",
+        "1st Place": 338,
+        "2nd Place": 380,
+        "3rd Place": 391,
+        "Total Rides": 12
+    },
+    {
+        "Start Station": "Damsg\u00c3\u00a5rdsveien 71",
+        "End Station": "Solheimsviken",
+        "1st Place": 199,
+        "2nd Place": 219,
+        "3rd Place": 228,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Festplassen",
+        "End Station": "St. Jakobs Plass",
+        "1st Place": 174,
+        "2nd Place": 245,
+        "3rd Place": 255,
+        "Total Rides": 8
+    },
+    {
+        "Start Station": "M\u00c3\u00b8llendalsplass",
+        "End Station": "Moxy Hotellet",
+        "1st Place": 282,
+        "2nd Place": 319,
+        "3rd Place": 328,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "C. Sundts gate",
+        "End Station": "Torgallmenningen",
+        "1st Place": 265,
+        "2nd Place": 281,
+        "3rd Place": 286,
+        "Total Rides": 11
+    },
+    {
+        "Start Station": "C. Sundts gate",
+        "End Station": "\u00c3\u02dcstre Murallmenningen nedre",
+        "1st Place": 199,
+        "2nd Place": 214,
+        "3rd Place": 216,
+        "Total Rides": 7
+    },
+    {
+        "Start Station": "\u00c3\u02dcstre Murallmenningen nedre",
+        "End Station": "St. Jakobs Plass",
+        "1st Place": 332,
+        "2nd Place": 404,
+        "3rd Place": 416,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Torgallmenningen",
+        "End Station": "C. Sundts gate",
+        "1st Place": 306,
+        "2nd Place": 350,
+        "3rd Place": 355,
+        "Total Rides": 8
+    },
+    {
+        "Start Station": "Comfort Hotel Bergen",
+        "End Station": "Torgallmenningen",
+        "1st Place": 197,
+        "2nd Place": 200,
+        "3rd Place": 265,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "St. Jakobs Plass",
+        "End Station": "Festplassen",
+        "1st Place": 186,
+        "2nd Place": 206,
+        "3rd Place": 210,
+        "Total Rides": 9
+    },
+    {
+        "Start Station": "Damsg\u00c3\u00a5rdsveien 71",
+        "End Station": "Nyg\u00c3\u00a5rdsporten",
+        "1st Place": 69,
+        "2nd Place": 274,
+        "3rd Place": 326,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Festplassen",
+        "End Station": "Nykirken",
+        "1st Place": 317,
+        "2nd Place": 331,
+        "3rd Place": 332,
+        "Total Rides": 8
+    },
+    {
+        "Start Station": "Torget",
+        "End Station": "C. Sundts gate",
+        "1st Place": 310,
+        "2nd Place": 355,
+        "3rd Place": 381,
+        "Total Rides": 9
+    },
+    {
+        "Start Station": "Thorm\u00c3\u00b8hlens gate",
+        "End Station": "Krohnviken",
+        "1st Place": 234,
+        "2nd Place": 245,
+        "3rd Place": 276,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Nykirken",
+        "End Station": "Nyg\u00c3\u00a5rdsporten",
+        "1st Place": 586,
+        "2nd Place": 596,
+        "3rd Place": 634,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Damsg\u00c3\u00a5rdsveien 71",
+        "End Station": "N\u00c3\u00b8stetorget",
+        "1st Place": 437,
+        "2nd Place": 535,
+        "3rd Place": 553,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Studentboligene",
+        "End Station": "Florida Bybanestopp",
+        "1st Place": 259,
+        "2nd Place": 272,
+        "3rd Place": 354,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Torgallmenningen",
+        "End Station": "Nykirkekaien",
+        "1st Place": 199,
+        "2nd Place": 215,
+        "3rd Place": 217,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "M\u00c3\u00b8llendalsplass",
+        "End Station": "H\u00c3\u00b8yteknologisenteret",
+        "1st Place": 293,
+        "2nd Place": 308,
+        "3rd Place": 310,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Torgallmenningen",
+        "End Station": "St. Jakobs Plass",
+        "1st Place": 252,
+        "2nd Place": 268,
+        "3rd Place": 318,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Studentsenteret UiB",
+        "End Station": "Festplassen",
+        "1st Place": 144,
+        "2nd Place": 153,
+        "3rd Place": 233,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Damsg\u00c3\u00a5rdsveien 71",
+        "End Station": "Krohnviken",
+        "1st Place": 130,
+        "2nd Place": 134,
+        "3rd Place": 161,
+        "Total Rides": 7
+    },
+    {
+        "Start Station": "St. Jakobs Plass",
+        "End Station": "\u00c3\u02dcstre Murallmenningen nedre",
+        "1st Place": 439,
+        "2nd Place": 457,
+        "3rd Place": 493,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Florida Bybanestopp",
+        "End Station": "Damsg\u00c3\u00a5rdsveien 71",
+        "1st Place": 193,
+        "2nd Place": 225,
+        "3rd Place": 291,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Damsg\u00c3\u00a5rdsveien 71",
+        "End Station": "St. Jakobs Plass",
+        "1st Place": 357,
+        "2nd Place": 406,
+        "3rd Place": 452,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Florida Bybanestopp",
+        "End Station": "Studentboligene",
+        "1st Place": 336,
+        "2nd Place": 340,
+        "3rd Place": 342,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "M\u00c3\u00b8llendalsplass",
+        "End Station": "Nyg\u00c3\u00a5rdsporten",
+        "1st Place": 345,
+        "2nd Place": 378,
+        "3rd Place": 460,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Cornerteateret",
+        "End Station": "Florida Bybanestopp",
+        "1st Place": 144,
+        "2nd Place": 146,
+        "3rd Place": 155,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Jonsvollkvartalet",
+        "End Station": "John Lunds plass",
+        "1st Place": 271,
+        "2nd Place": 285,
+        "3rd Place": 306,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Cornerteateret",
+        "End Station": "Damsg\u00c3\u00a5rdsveien",
+        "1st Place": 179,
+        "2nd Place": 219,
+        "3rd Place": 229,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "M\u00c3\u00b8llendalsplass",
+        "End Station": "Busstasjonen 1 Nord",
+        "1st Place": 349,
+        "2nd Place": 366,
+        "3rd Place": 386,
+        "Total Rides": 12
+    },
+    {
+        "Start Station": "\u00c3\u02dcstre Murallmenningen nedre",
+        "End Station": "Nykirken",
+        "1st Place": 153,
+        "2nd Place": 154,
+        "3rd Place": 162,
+        "Total Rides": 6
+    },
+    {
+        "Start Station": "Torgallmenningen",
+        "End Station": "Comfort Hotel Bergen",
+        "1st Place": 179,
+        "2nd Place": 269,
+        "3rd Place": 310,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "AdO arena",
+        "End Station": "Busstasjonen 1 Nord",
+        "1st Place": 92,
+        "2nd Place": 143,
+        "3rd Place": 151,
+        "Total Rides": 7
+    },
+    {
+        "Start Station": "Busstasjonen 1 Nord",
+        "End Station": "M\u00c3\u00b8llendalsplass",
+        "1st Place": 337,
+        "2nd Place": 387,
+        "3rd Place": 395,
+        "Total Rides": 11
+    },
+    {
+        "Start Station": "Dreggsallmenningen S\u00c3\u00b8r",
+        "End Station": "Sandvikstorget",
+        "1st Place": 411,
+        "2nd Place": 519,
+        "3rd Place": 4181,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Solheimsviken",
+        "End Station": "Festplassen",
+        "1st Place": 457,
+        "2nd Place": 502,
+        "3rd Place": 567,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Krohnviken",
+        "End Station": "Thorm\u00c3\u00b8hlens gate",
+        "1st Place": 238,
+        "2nd Place": 275,
+        "3rd Place": 279,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Gulating",
+        "End Station": "M\u00c3\u00b8llendalsplass",
+        "1st Place": 487,
+        "2nd Place": 528,
+        "3rd Place": 650,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Kronstad bybanestopp",
+        "End Station": "Studentboligene",
+        "1st Place": 189,
+        "2nd Place": 221,
+        "3rd Place": 223,
+        "Total Rides": 5
+    },
+    {
+        "Start Station": "Busstasjonen 1 Nord",
+        "End Station": "Solheimsgaten (ved Extra)",
+        "1st Place": 572,
+        "2nd Place": 612,
+        "3rd Place": 783,
+        "Total Rides": 5
+    }
+]
