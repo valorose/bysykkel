@@ -1,83 +1,41 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const stationInfoUrl = "https://gbfs.urbansharing.com/bergenbysykkel.no/station_information.json";
-  const stationStatusUrl = "https://gbfs.urbansharing.com/bergenbysykkel.no/station_status.json";
-  const attractionsUrl = "attractions.json";  // Local JSON file for attractions
+  const stationDataUrl = "cleaned_leaderboard.json";  // Path to the JSON file
   let stations = [];
-  let attractions = [];
+  let selectedStartStation = null;
+  let selectedEndStation = null;
 
-  // Initialize the map centered on Bergen
   const map = L.map('map').setView([60.3913, 5.3221], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  // Fetch Station Information and Status
-  async function fetchStationData() {
-    try {
-      const [infoResponse, statusResponse, attractionsResponse] = await Promise.all([
-        fetch(stationInfoUrl),
-        fetch(stationStatusUrl),
-        fetch(attractionsUrl)
-      ]);
+  // Create a sidebar to show route info
+  const sidebar = document.createElement('div');
+  sidebar.id = 'routeInfo';
+  sidebar.style.width = '300px';
+  sidebar.style.height = '150px';
+  sidebar.style.position = 'absolute';
+  sidebar.style.top = '10px';
+  sidebar.style.left = '10px';
+  sidebar.style.backgroundColor = 'white';
+  sidebar.style.padding = '10px';
+  sidebar.style.border = '1px solid #ccc';
+  document.body.appendChild(sidebar);
 
-      if (!infoResponse.ok || !statusResponse.ok || !attractionsResponse.ok) throw new Error("Failed to load data");
-
-      const infoData = await infoResponse.json();
-      const statusData = await statusResponse.json();
-      const attractionsData = await attractionsResponse.json();
-
-      stations = combineStationData(infoData.data.stations, statusData.data.stations);
-      attractions = attractionsData;
-
-      displayStationsOnMap(stations);
-      displayAttractionsOnMap(attractions);
-    } catch (error) {
-      console.error("Error loading data:", error);
-    }
-  }
-
-  // Combine Station Info and Status
-  function combineStationData(info, status) {
-    return info.map((station) => {
-      const statusInfo = status.find((s) => s.station_id === station.station_id);
-      return {
-        ...station,
-        num_bikes_available: statusInfo ? statusInfo.num_bikes_available : 0,
-        num_docks_available: statusInfo ? statusInfo.num_docks_available : 0
-      };
+  // Load Station and Route Data
+  fetch(stationDataUrl)
+    .then(response => response.json())
+    .then(data => {
+      stations = data;
+      displayStationsOnMap(data);
     });
-  }
 
-  // Display Stations on Map
+  // Display stations on map
   function displayStationsOnMap(stations) {
-    stations.forEach((station) => {
-      const marker = L.marker([station.lat, station.lon]).addTo(map);
-      marker.bindPopup(`
-        <strong>${station.name}</strong><br>
-        Bikes Available: ${station.num_bikes_available}<br>
-        Docks Available: ${station.num_docks_available}
-      `);
+    stations.forEach(station => {
+      const marker = L.marker([getStationLat(station.Start Station), getStationLon(station.Start Station)]).addTo(map);
+      marker.bindPopup(`<strong>${station["Start Station"]}</strong>`);
+      marker.on('click', () => handleStationClick(station));
     });
   }
-
-  // Display Attractions on Map
-  function displayAttractionsOnMap(attractions) {
-    attractions.forEach((attraction) => {
-      const icon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-        iconSize: [30, 30]
-      });
-
-      const marker = L.marker([attraction.latitude, attraction.longitude], { icon }).addTo(map);
-      marker.bindPopup(`
-        <strong>${attraction.name}</strong><br>
-        Type: ${attraction.type}<br>
-        Address: ${attraction.address}<br>
-        <a href="${attraction.website}" target="_blank">Website</a>
-      `);
-    });
-  }
-
-  // Start by fetching the data
-  fetchStationData();
-});
+system
