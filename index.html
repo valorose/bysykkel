@@ -26,6 +26,7 @@
     #map-container {
       flex: 1;
       position: relative;
+      height: 80vh;  /* Adjusted height to ensure visibility */
     }
     #map { 
       height: 100%; 
@@ -50,7 +51,7 @@
   </header>
   <div id="map-container">
     <div id="map"></div>
-    <div id="routeInfo"></div>
+    <div id="routeInfo">Select a start and end station to see top routes.</div>
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="script.js"></script>
