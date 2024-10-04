@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const stationDataUrl = "cleaned_leaderboard.json";  // Path to the new JSON file
+  const stationDataUrl = "cleaned_leaderboard.json";  // Ensure path is correct and file is uploaded
   let routesData = [];
   let selectedStartStation = null;
   let selectedEndStation = null;
@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
+
+  console.log("Map initialized successfully");
 
   // Create a sidebar to display the top 3 times
   const sidebar = document.createElement('div');
@@ -40,33 +42,14 @@ document.addEventListener("DOMContentLoaded", () => {
   loadingIndicator.style.borderRadius = '5px';
   document.body.appendChild(loadingIndicator);
 
-  // Define marker icons
-  const defaultIcon = L.icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-  });
-
-  const greenIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-  });
-
-  const redIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-  });
-
+  console.log("Loading JSON data...");
+  
   // Load the JSON file and parse the data
   loadingIndicator.style.display = 'block';
   fetch(stationDataUrl)
     .then(response => response.json())
     .then(data => {
+      console.log("Data loaded successfully:", data);  // Confirm data is loaded
       routesData = data;
       displayStationsOnMap(routesData);
       loadingIndicator.style.display = 'none';
@@ -98,52 +81,40 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    console.log("Unique stations identified:", uniqueStations);
+
     uniqueStations.forEach((station, stationId) => {
       if (station.latitude && station.longitude) {
-        const marker = L.marker([station.latitude, station.longitude], { icon: defaultIcon }).addTo(map);
+        console.log(`Adding marker: ${station.name} [${station.latitude}, ${station.longitude}]`);
+        const marker = L.marker([station.latitude, station.longitude]).addTo(map);
         marker.bindPopup(`<strong>${station.name}</strong>`);
         marker.on('click', () => handleStationClick(stationId, station.name, marker));
         markers.set(stationId, marker);
+      } else {
+        console.error(`Missing coordinates for station: ${station.name}`);
       }
     });
   }
 
   // Handle station click event to set start and end stations
   function handleStationClick(stationId, stationName, marker) {
+    console.log(`Station Clicked: ${stationName}, ID: ${stationId}`);
     if (!selectedStartStation) {
       selectedStartStation = { id: stationId, name: stationName };
-      marker.setIcon(greenIcon);
+      marker.setIcon(L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png' }));
       sidebar.innerHTML = `Start Station Selected: <strong>${stationName}</strong><br>Select an end station.`;
     } else if (!selectedEndStation) {
       selectedEndStation = { id: stationId, name: stationName };
-      marker.setIcon(redIcon);
+      marker.setIcon(L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' }));
       sidebar.innerHTML = `End Station Selected: <strong>${stationName}</strong><br>Loading top 3 times...`;
       showTopTimes(selectedStartStation.id, selectedEndStation.id);
     } else {
-      markers.get(selectedStartStation.id).setIcon(defaultIcon);
-      markers.get(selectedEndStation.id).setIcon(defaultIcon);
+      markers.get(selectedStartStation.id).setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png' }));
+      markers.get(selectedEndStation.id).setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png' }));
       selectedStartStation = { id: stationId, name: stationName };
       selectedEndStation = null;
-      marker.setIcon(greenIcon);
+      marker.setIcon(L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png' }));
       sidebar.innerHTML = `New Start Station Selected: <strong>${stationName}</strong><br>Select an end station.`;
     }
   }
 
-  // Display top 3 times between the selected stations
-  function showTopTimes(startStationId, endStationId) {
-    const top3Routes = routesData
-      .filter(route => route.start_station_id === startStationId && route.end_station_id === endStationId)
-      .sort((a, b) => a.duration - b.duration)
-      .slice(0, 3);
-
-    if (top3Routes.length > 0) {
-      let timesText = `<strong>Top 3 Times from ${selectedStartStation.name} to ${selectedEndStation.name}:</strong><br>`;
-      top3Routes.forEach((route, index) => {
-        timesText += `${index + 1}. ${route.duration} seconds<br>`;
-      });
-      sidebar.innerHTML = timesText;
-    } else {
-      sidebar.innerHTML = `No data available for the route from ${selectedStartStation.name} to ${selectedEndStation.name}.`;
-    }
-  }
-});
