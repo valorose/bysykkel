@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const stationDataUrl = "cleaned_leaderboard.json";  // Ensure path is correct
+  const stationDataUrl = "cleaned_leaderboard.json";  
   let routesData = [];
   let selectedStartStation = null;
   let selectedEndStation = null;
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch(stationDataUrl)
     .then(response => response.json())
     .then(data => {
-      console.log("Data loaded successfully:", data);  // Confirm data is loaded
+      console.log("Data Loaded:", data);  // Check if data is correctly loaded
       routesData = data;
       displayStationsOnMap(routesData);
     })
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handle station click event to set start and end stations
+  // Function to handle station clicks
   function handleStationClick(stationId, stationName, marker) {
     console.log(`Station Clicked: ${stationName}, ID: ${stationId}`);
     // Your existing logic for handling clicks...
