@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let routesData = [];
   let selectedStartStation = null;
   let selectedEndStation = null;
+  let routeLine;
+  const markers = new Map();
+  const routeCache = new Map();
 
   // Initialize the map centered on Bergen
   const map = L.map('map').setView([60.3913, 5.3221], 13);
@@ -23,72 +26,169 @@ document.addEventListener("DOMContentLoaded", () => {
   sidebar.style.border = '1px solid #ccc';
   document.body.appendChild(sidebar);
 
+  // Create loading indicator
+  const loadingIndicator = document.createElement('div');
+  loadingIndicator.id = 'loadingIndicator';
+  loadingIndicator.style.display = 'none';
+  loadingIndicator.textContent = 'Loading...';
+  loadingIndicator.style.position = 'absolute';
+  loadingIndicator.style.top = '50%';
+  loadingIndicator.style.left = '50%';
+  loadingIndicator.style.transform = 'translate(-50%, -50%)';
+  loadingIndicator.style.padding = '10px';
+  loadingIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+  loadingIndicator.style.borderRadius = '5px';
+  document.body.appendChild(loadingIndicator);
+
+  // Define marker icons
+  const defaultIcon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  const greenIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  const redIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
   // Load the JSON file and parse the data
+  loadingIndicator.style.display = 'block';
   fetch(stationDataUrl)
     .then(response => response.json())
     .then(data => {
       routesData = data;
       displayStationsOnMap(routesData);
+      loadingIndicator.style.display = 'none';
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      loadingIndicator.style.display = 'none';
+      sidebar.innerHTML = 'Error loading data. Please try again later.';
     });
 
   // Display stations on the map (using unique stations)
   function displayStationsOnMap(routes) {
     const uniqueStations = new Map();
 
-    // Create unique station markers for start and end stations
     routes.forEach(route => {
-      if (!uniqueStations.has(route.start_station_name)) {
-        uniqueStations.set(route.start_station_name, [route.start_station_latitude, route.start_station_longitude]);
+      if (!uniqueStations.has(route.start_station_id)) {
+        uniqueStations.set(route.start_station_id, {
+          name: route.start_station_name,
+          description: route.start_station_description,
+          latitude: route.start_station_latitude,
+          longitude: route.start_station_longitude
+        });
       }
-      if (!uniqueStations.has(route.end_station_name)) {
-        uniqueStations.set(route.end_station_name, [route.end_station_latitude, route.end_station_longitude]);
+      if (!uniqueStations.has(route.end_station_id)) {
+        uniqueStations.set(route.end_station_id, {
+          name: route.end_station_name,
+          description: route.end_station_description,
+          // Note: You might need to add end station latitude and longitude to your JSON
+          latitude: route.end_station_latitude,
+          longitude: route.end_station_longitude
+        });
       }
     });
 
-    // Add markers for each unique station
-    uniqueStations.forEach((coords, stationName) => {
-      const marker = L.marker(coords).addTo(map);
-      marker.bindPopup(`<strong>${stationName}</strong>`);
-      
-      // Handle station selection on click
-      marker.on('click', () => handleStationClick(stationName));
+    uniqueStations.forEach((station, stationId) => {
+      const marker = L.marker([station.latitude, station.longitude], {icon: defaultIcon}).addTo(map);
+      marker.bindPopup(`<strong>${station.name}</strong><br>${station.description}`);
+      marker.on('click', () => handleStationClick(stationId, station.name, marker));
+      markers.set(stationId, marker);
     });
   }
 
   // Handle station click event to set start and end stations
-  function handleStationClick(stationName) {
+  function handleStationClick(stationId, stationName, marker) {
     if (!selectedStartStation) {
-      selectedStartStation = stationName;
+      selectedStartStation = { id: stationId, name: stationName };
+      marker.setIcon(greenIcon);
       sidebar.innerHTML = `Start Station Selected: <strong>${stationName}</strong><br>Select an end station.`;
     } else if (!selectedEndStation) {
-      selectedEndStation = stationName;
+      selectedEndStation = { id: stationId, name: stationName };
+      marker.setIcon(redIcon);
       sidebar.innerHTML = `End Station Selected: <strong>${stationName}</strong><br>Loading top 3 times...`;
-      showTopTimes(selectedStartStation, selectedEndStation);
+      showTopTimes(selectedStartStation.id, selectedEndStation.id);
+      drawRoute(selectedStartStation.id, selectedEndStation.id);
     } else {
-      // Reset if both stations are already selected
-      selectedStartStation = stationName;
+      // Reset
+      markers.get(selectedStartStation.id).setIcon(defaultIcon);
+      markers.get(selectedEndStation.id).setIcon(defaultIcon);
+      selectedStartStation = { id: stationId, name: stationName };
       selectedEndStation = null;
+      marker.setIcon(greenIcon);
       sidebar.innerHTML = `New Start Station Selected: <strong>${stationName}</strong><br>Select an end station.`;
+      if (routeLine) map.removeLayer(routeLine);
     }
   }
 
   // Display top 3 times between the selected start and end stations
-  function showTopTimes(startStation, endStation) {
+  function showTopTimes(startStationId, endStationId) {
+    const top3Routes = getTopTimes(startStationId, endStationId);
+
+    if (top3Routes.length > 0) {
+      let timesText = `<strong>Top 3 Times from ${selectedStartStation.name} to ${selectedEndStation.name}:</strong><br>`;
+      top3Routes.forEach((route, index) => {
+        timesText += `${index + 1}. ${formatDuration(route.duration)}<br>`;
+      });
+      sidebar.innerHTML = timesText;
+    } else {
+      sidebar.innerHTML = `No route data available between ${selectedStartStation.name} and ${selectedEndStation.name}.`;
+    }
+  }
+
+  // Get top 3 times from cache or calculate them
+  function getTopTimes(startStationId, endStationId) {
+    const cacheKey = `${startStationId}-${endStationId}`;
+    
+    if (routeCache.has(cacheKey)) {
+      return routeCache.get(cacheKey);
+    }
+
     const matchingRoutes = routesData
       .filter(route => 
-        route.start_station_name === startStation && route.end_station_name === endStation
+        route.start_station_id === startStationId && route.end_station_id === endStationId
       )
-      .sort((a, b) => a.duration - b.duration);  // Sort by duration (ascending)
+      .sort((a, b) => a.duration - b.duration)
+      .slice(0, 3);
 
-    if (matchingRoutes.length > 0) {
-      const top3Routes = matchingRoutes.slice(0, 3);  // Get the top 3 durations
-      let timesText = `<strong>Top 3 Times from ${startStation} to ${endStation}:</strong><br>`;
-      top3Routes.forEach((route, index) => {
-        timesText += `${index + 1}. ${route.duration} seconds<br>`;
-      });
-      sidebar.innerHTML = timesText;  // Update the sidebar with top times
-    } else {
-      sidebar.innerHTML = `No route data available between ${startStation} and ${endStation}.`;
+    routeCache.set(cacheKey, matchingRoutes);
+    return matchingRoutes;
+  }
+
+  // Format duration from seconds to minutes and seconds
+  function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  }
+
+  // Draw route between start and end stations
+  function drawRoute(startStationId, endStationId) {
+    const startMarker = markers.get(startStationId);
+    const endMarker = markers.get(endStationId);
+
+    if (startMarker && endMarker) {
+      const startLatLng = startMarker.getLatLng();
+      const endLatLng = endMarker.getLatLng();
+
+      if (routeLine) {
+        map.removeLayer(routeLine);
+      }
+
+      routeLine = L.polyline([startLatLng, endLatLng], {color: 'blue', weight: 3}).addTo(map);
+      map.fitBounds(routeLine.getBounds(), {padding: [50, 50]});
     }
   }
 });
