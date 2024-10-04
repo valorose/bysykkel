@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => response.json())
         .then(data => {
             ridesData = data;
+            displayMostCommonRoutes(ridesData);
         })
         .catch(error => console.error('Error fetching rides data:', error));
 
@@ -88,5 +89,34 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             podiumContainer.appendChild(podiumItem);
         });
+    }
+
+    // Display the most common routes
+    function displayMostCommonRoutes(ridesData) {
+        const routeCounts = {};
+
+        // Count the occurrences of each route
+        ridesData.forEach(ride => {
+            const routeKey = `${ride.start_station_name} -> ${ride.end_station_name}`;
+            routeCounts[routeKey] = (routeCounts[routeKey] || 0) + 1;
+        });
+
+        // Convert route counts to an array and sort by the highest count
+        const sortedRoutes = Object.entries(routeCounts)
+            .sort(([, countA], [, countB]) => countB - countA)
+            .slice(0, 5); // Get the top 5 most common routes
+
+        const commonRoutesContainer = document.createElement('div');
+        commonRoutesContainer.id = 'common-routes-container';
+        commonRoutesContainer.innerHTML = '<h3>Most Common Routes</h3>';
+
+        sortedRoutes.forEach(([route, count]) => {
+            const routeElement = document.createElement('p');
+            routeElement.textContent = `${route}: ${count} rides`;
+            commonRoutesContainer.appendChild(routeElement);
+        });
+
+        // Append the most common routes under the fastest times section
+        document.getElementById('info-box').appendChild(commonRoutesContainer);
     }
 });
