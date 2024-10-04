@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedStartStation = null;
     let selectedEndStation = null;
     let ridesData = []; // To store ride data from the JSON file
+    let startMarker = null;
+    let endMarker = null;
 
     // Load rides data from JSON file
     fetch('rides_data.json')
@@ -25,28 +27,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 const marker = L.marker([station.lat, station.lon]).addTo(map);
                 marker.bindPopup(`<strong>${station.name}</strong><br>${station.address}`);
 
-                marker.on('click', () => handleStationClick(station));
+                marker.on('click', () => handleStationClick(station, marker));
             });
         })
         .catch(error => console.error('Error fetching station data:', error));
 
     // Handle station click event to select start and end stations
-    function handleStationClick(station) {
+    function handleStationClick(station, marker) {
         if (!selectedStartStation) {
             selectedStartStation = station;
-            console.log(`Start Station Selected: ${station.name}`);
-            alert(`Start Station Selected: ${station.name}`);
+            if (startMarker) startMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png' }));
+            startMarker = marker;
+            startMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon-red.png' }));
         } else if (!selectedEndStation) {
             selectedEndStation = station;
-            console.log(`End Station Selected: ${station.name}`);
-            alert(`End Station Selected: ${station.name}`);
+            if (endMarker) endMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png' }));
+            endMarker = marker;
+            endMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon-blue.png' }));
             showFastestTimes(selectedStartStation.station_id, selectedEndStation.station_id);
         } else {
             // Reset selection if both stations are already selected
+            if (startMarker) startMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png' }));
+            if (endMarker) endMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png' }));
             selectedStartStation = station;
             selectedEndStation = null;
-            console.log(`New Start Station Selected: ${station.name}`);
-            alert(`New Start Station Selected: ${station.name}`);
+            startMarker = marker;
+            startMarker.setIcon(L.icon({ iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon-red.png' }));
         }
     }
 
