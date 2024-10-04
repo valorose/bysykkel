@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
+    // Define the tours
     const tours = [
         {
             name: "Tour 1: Bryggen",
@@ -23,10 +24,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     ];
 
+    // Add the tours to the map
     tours.forEach(tour => {
         const polyline = L.polyline(tour.route, { color: 'blue' }).addTo(map);
         polyline.bindPopup(tour.name);
     });
+
+    // Fetch and display bike stations
+    fetch('https://gbfs.urbansharing.com/bergenbysykkel.no/station_information.json')
+        .then(response => response.json())
+        .then(data => {
+            const stations = data.data.stations;
+            stations.forEach(station => {
+                const marker = L.marker([station.lat, station.lon]).addTo(map);
+                marker.bindPopup(`<strong>${station.name}</strong><br>${station.address}`);
+            });
+        })
+        .catch(error => console.error('Error fetching station data:', error));
 
     // Display tour info on click
     map.on('click', function(e) {
