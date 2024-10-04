@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const stationInfoUrl = "https://gbfs.urbansharing.com/bergenbysykkel.no/station_information.json";
   const stationStatusUrl = "https://gbfs.urbansharing.com/bergenbysykkel.no/station_status.json";
+  const attractionsUrl = "attractions.json";  // Local JSON file for attractions
   let stations = [];
+  let attractions = [];
 
   // Initialize the map centered on Bergen
   const map = L.map('map').setView([60.3913, 5.3221], 13);
@@ -9,20 +11,28 @@ document.addEventListener("DOMContentLoaded", () => {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  // Fetch Station Information
+  // Fetch Station Information and Status
   async function fetchStationData() {
     try {
-      const infoResponse = await fetch(stationInfoUrl);
-      const statusResponse = await fetch(stationStatusUrl);
-      if (!infoResponse.ok || !statusResponse.ok) throw new Error("Failed to load station data");
+      const [infoResponse, statusResponse, attractionsResponse] = await Promise.all([
+        fetch(stationInfoUrl),
+        fetch(stationStatusUrl),
+        fetch(attractionsUrl)
+      ]);
+
+      if (!infoResponse.ok || !statusResponse.ok || !attractionsResponse.ok) throw new Error("Failed to load data");
 
       const infoData = await infoResponse.json();
       const statusData = await statusResponse.json();
+      const attractionsData = await attractionsResponse.json();
+
       stations = combineStationData(infoData.data.stations, statusData.data.stations);
+      attractions = attractionsData;
 
       displayStationsOnMap(stations);
+      displayAttractionsOnMap(attractions);
     } catch (error) {
-      console.error("Error loading station data:", error);
+      console.error("Error loading data:", error);
     }
   }
 
@@ -50,6 +60,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Start by fetching the station data
+  // Display Attractions on Map
+  function displayAttractionsOnMap(attractions) {
+    attractions.forEach((attraction) => {
+      const icon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+        iconSize: [30, 30]
+      });
+
+      const marker = L.marker([attraction.latitude, attraction.longitude], { icon }).addTo(map);
+      marker.bindPopup(`
+        <strong>${attraction.name}</strong><br>
+        Type: ${attraction.type}<br>
+        Address: ${attraction.address}<br>
+        <a href="${attraction.website}" target="_blank">Website</a>
+      `);
+    });
+  }
+
+  // Start by fetching the data
   fetchStationData();
 });
